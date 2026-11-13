@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>EconGraph IB 6 · Interactive diagram lab</title>
+<style>
+:root{--navy:#10213c;--ink:#20314b;--muted:#65768e;--blue:#285fca;--lightblue:#eaf2ff;--line:#e1e7f0;--bg:#f4f6fa;--card:#fff;--green:#0b9077;--gold:#c68c1d;--red:#cc4d64;--purple:#7653bd;color:var(--ink);background:var(--bg);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;font-synthesis:none}
+*{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #81b2fa;outline-offset:2px}button:disabled{opacity:.45;cursor:not-allowed}
+.topbar{background:#101f37;color:#fff;padding:15px max(20px,calc((100vw - 1620px)/2));display:flex;align-items:center;justify-content:space-between;gap:18px;border-bottom:3px solid #427ed9}.branding{display:flex;gap:11px;align-items:center}.logo{display:grid;place-items:center;width:43px;height:43px;background:#3075e4;border-radius:12px;font-weight:900;letter-spacing:-.12em;font-size:19px}.topbar h1{margin:0;font-size:19px;letter-spacing:-.035em}.topbar p{color:#b7cbe8;margin:3px 0 0;font-size:11px}.version{border:1px solid #536a8a;padding:7px 11px;border-radius:999px;font-size:11px;color:#cde1ff;white-space:nowrap}
+.shell{max-width:1620px;margin:0 auto;display:grid;grid-template-columns:235px minmax(360px,1fr) 330px;gap:16px;padding:18px;align-items:start}.card{background:var(--card);border:1px solid var(--line);border-radius:15px;box-shadow:0 3px 14px #14305408;overflow:hidden}.sidebar{position:sticky;top:16px;max-height:calc(100vh - 32px);display:flex;flex-direction:column}.sidebar-head{padding:19px 16px 10px}.eyebrow{color:var(--blue);text-transform:uppercase;letter-spacing:.11em;font-size:10px;font-weight:850}.sidebar h2{font-size:16px;margin:5px 0 11px;letter-spacing:-.025em}.search{width:100%;border-radius:9px;border:1px solid #dce5f0;padding:10px 12px;background:#fbfcff;font-size:12px}.filters{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.filter{border:1px solid #e2e8f2;background:#f9fbff;border-radius:6px;font-size:10px;color:#65768d;padding:6px 8px;font-weight:700}.filter.active{background:#e8f0fe;color:#1c5cbf;border-color:#b4cdfa}.nav{overflow:auto;padding:2px 10px 14px}.nav-group{color:#929dac;text-transform:uppercase;font-weight:850;letter-spacing:.1em;font-size:10px;margin:15px 7px 7px}.nav-item{display:flex;align-items:center;justify-content:space-between;gap:9px;border:0;border-radius:9px;background:transparent;width:100%;text-align:left;padding:11px 9px;font-weight:600;font-size:12.5px;color:#354761}.nav-item:hover{background:#f2f6fc}.nav-item.active{background:#eaf2ff;color:#1756b9}.tag{border:1px solid #e0e7f2;color:#6e7e95;font-size:9px;padding:3px 5px;border-radius:4px;font-weight:800}.tag.hl{color:#784ca4;background:#f5eefd;border-color:#e6d9f4}
+.main{min-width:0}.main-head{padding:22px 25px 12px;display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.main h2{margin:5px 0 7px;font-size:24px;letter-spacing:-.04em}.sub{color:var(--muted);font-size:12.5px;line-height:1.55;margin:0;max-width:680px}.level{background:#ecf4ff;color:#3066b0;font-size:10px;padding:6px 9px;border-radius:6px;white-space:nowrap;font-weight:850}.chartpad{padding:0 14px}.chart{border:1px solid #e6ebf3;border-radius:12px;overflow:hidden;background:#fff;min-height:250px}.chart svg{width:100%;height:auto;display:block;max-height:660px}.statusbar{display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:10px 23px;min-height:47px}.statusbar strong{font-size:11px;color:#7b889a;margin-right:3px}.chip{border:1px solid #b9d1f7;background:#f0f6ff;border-radius:100px;color:#1959b1;padding:5px 9px;font-size:11px;font-weight:750}.chip:hover{background:#dceafe}.muted-chip{color:#99a6b5;font-size:11px}.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;padding:4px 22px 16px}.metric{background:#f7f9fd;border:1px solid #edf0f5;border-radius:10px;padding:11px 13px;min-width:0}.metric-label{color:#7b8ba3;font-size:10px;font-weight:700;line-height:1.35}.metric-value{font-size:18px;font-weight:850;color:#233e65;margin-top:3px;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.metric-detail{font-size:10px;color:#9ba6b5;margin-top:1px}.actions{display:flex;flex-wrap:wrap;gap:8px;border-top:1px solid #edf0f5;padding:14px 22px 18px}.btn{background:white;color:#294364;border:1px solid #d3ddec;padding:9px 12px;font-size:12px;font-weight:750;border-radius:8px}.btn:hover{background:#f4f8ff}.btn.primary{background:#205dcc;border-color:#205dcc;color:white}.btn.primary:hover{background:#174ba6}
+.right{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto}.side-section{padding:17px 18px;border-bottom:1px solid #edf0f5}.side-section:last-child{border-bottom:0}.side-section h3{margin:0 0 10px;font-size:14px;letter-spacing:-.015em}.helper{font-size:11.5px;color:#7c8ba0;line-height:1.5;margin:0 0 12px}.sectiontitle{font-size:10px;font-weight:850;letter-spacing:.1em;text-transform:uppercase;color:#8997a9;margin:15px 0 9px}.action-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.addbtn{background:#f9fbfe;border:1px solid #dfe7f2;color:#385270;border-radius:9px;padding:10px 8px;display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;min-height:65px}.addbtn:hover{background:#eef5ff;border-color:#adc8ee}.addbtn.active{background:#e9f2ff;border:1.5px solid #4280dd;color:#134fa8}.addbtn .addicon{font-size:15px;line-height:1}.addbtn span:last-child{font-size:11px;font-weight:800;line-height:1.3}.range{margin:13px 0 18px}.rangehead{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12px;color:#43546d;font-weight:650;margin-bottom:6px}.range strong{color:#1d5ec2;background:#eef4ff;font-size:11px;border-radius:6px;padding:4px 6px;font-variant-numeric:tabular-nums}.range input{display:block;width:100%;accent-color:#2468cf;cursor:pointer}.rangeends{display:flex;justify-content:space-between;color:#a4afbd;font-size:10px}.checkrow{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;color:#4a5d73;padding:7px 0}.checkrow input{width:16px;height:16px;accent-color:#2867cb}.choice{border:1px solid #dce5f2;width:100%;background:#fff;border-radius:8px;padding:9px 10px;color:#31435d;font-size:12px}.titlefield{width:100%;border-radius:8px;border:1px solid #dce4ef;padding:10px 11px;font-size:12px}.note{font-size:12px;line-height:1.65;color:#53657a;white-space:pre-wrap;margin:0}.formula{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:11px;line-height:1.75;color:#2c4866;background:#f3f7fd;border-radius:9px;padding:11px;white-space:pre-wrap;margin-top:12px;overflow-wrap:anywhere}.tip{font-size:11.5px;color:#7e5b20;line-height:1.5;border:1px solid #f4e5c2;background:#fffaef;padding:10px;border-radius:9px}.hint{margin:8px 0 0;font-size:11px;color:#7b8999;line-height:1.5}.footer{max-width:1620px;margin:0 auto;padding:0 20px 25px;color:#8493a6;font-size:11px;line-height:1.5}.info-badge{background:#f4f0fb;color:#7953ab;border-radius:6px;padding:5px 8px;font-weight:850;font-size:10px}
+.top-actions{display:flex;align-items:center;gap:12px}.language-picker{display:flex;align-items:center;gap:8px;color:#d5e4fa;font-size:11px;font-weight:700}.language-picker select{background:#fff;border:1px solid #92acd4;border-radius:8px;color:#14284a;padding:8px 27px 8px 10px;font-size:12px;font-weight:750}.language-picker select:hover{border-color:#fff}@media(max-width:760px){.language-picker>span{display:none}.language-picker select{max-width:100px}}
+@media(max-width:1280px){.shell{grid-template-columns:215px minmax(350px,1fr)}.right{grid-column:2;position:static;max-height:none;display:grid;grid-template-columns:1fr 1fr}.side-section{border-right:1px solid #eef1f5}.side-section:last-child{grid-column:span 2}.sidebar{max-height:calc(100vh - 32px)}}
+@media(max-width:760px){.topbar{padding:12px 14px}.topbar h1{font-size:17px}.version{display:none}.shell{padding:10px;gap:10px;display:flex;flex-direction:column}.sidebar{position:static;max-height:none;width:100%}.nav{display:flex;overflow:auto;gap:7px;padding:4px 12px 12px}.nav-group{display:none}.nav-item{min-width:145px;max-width:195px;border:1px solid #e2eaf6;flex-shrink:0}.sidebar-head{padding:13px 12px 8px}.sidebar h2{font-size:14px}.main,.right{width:100%}.right{display:block}.side-section:last-child{grid-column:auto}.main-head{padding:17px 16px 10px}.main h2{font-size:21px}.chartpad{padding:0 7px}.metrics{padding:5px 10px 10px;gap:5px}.metric{padding:9px 7px}.metric-value{font-size:15px}.statusbar{padding:10px 12px}.actions{padding:12px 10px}.actions .btn{flex:1;white-space:nowrap}.footer{padding:5px 15px 25px}}
+@media print{body{background:white}.topbar,.sidebar,.right,.statusbar,.metrics,.actions,.footer{display:none!important}.shell{display:block;padding:0}.main{box-shadow:none;border:0}.main-head{padding:8px 20px}.chart{border:0}.chartpad{padding:0}.chart svg{max-height:unset}.main h2{font-size:20px}}
+
+/* Sequential AD–AS editor */
+.macro-add{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.macro-add button{padding:12px 10px;border:1px solid #9db7dd;border-radius:10px;background:#edf5ff;color:#204a80;font-weight:800;font-size:12px}
+.macro-add button:last-child{background:#fff0f2;border-color:#e9b9c1;color:#963e4b}
+.macro-add button:hover{filter:brightness(.96)}
+.macro-step{border:1px solid #dee7f3;background:#f9fbff;border-radius:10px;padding:10px;margin:9px 0}
+.macro-step-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.macro-step-title{font-size:12px;font-weight:800;color:#294568}
+.macro-step-actions{display:flex;gap:3px}
+.macro-step-actions button{border:1px solid #d4e0ee;background:white;color:#496077;font-weight:bold;border-radius:5px;min-width:26px;min-height:27px;padding:1px 5px}
+.macro-step-actions button:hover{background:#ecf3ff}.macro-step-actions button:disabled{opacity:.27}
+.macro-step input[type=range]{width:100%;accent-color:#2c66d5;margin:8px 0 3px}
+.macro-step .macro-minmax{display:flex;justify-content:space-between;color:#8592a3;font-size:10px}
+.stage-panel{padding:4px 22px 12px}.stage-panel[hidden]{display:none}
+.stage-panel h3{margin:5px 0 8px;font-size:13px;color:#294363}
+.stage-table-scroll{width:100%;overflow-x:auto;border:1px solid #e6edf5;border-radius:9px}
+.stage-panel table{width:100%;border-collapse:collapse;font-size:11px;text-align:left;white-space:nowrap}
+.stage-panel th,.stage-panel td{padding:9px 10px;border-bottom:1px solid #e9eef5}
+.stage-panel thead{background:#f1f6fd;color:#304b6c}.stage-panel tbody tr:last-child td{border-bottom:0}
+.stage-panel tbody tr:last-child{background:#eef7f4;font-weight:750}
+.stage-caption{font-size:11px;color:#7c8b9e;line-height:1.5;margin:7px 0 0}
+
+.policy-add{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:10px 0 14px}
+.policy-add button{border:1px solid #bfcfe7;background:#f0f6ff;color:#245796;border-radius:9px;min-height:43px;text-align:left;padding:7px 9px;font-size:11px;font-weight:750;cursor:pointer}
+.policy-add button:hover{background:#dfeafe}
+.small-clear{width:100%;margin:5px 0 8px;background:#fff8f6;color:#9a3c35;border-color:#efc6c0}
+.stage-table-scroll td,.stage-table-scroll th{padding:7px 8px}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="branding"><div class="logo">E·G</div><div><h1>EconGraph IB</h1><p>Construye diagramas, añade intervenciones y compara resultados</p></div></div><div class="top-actions"><label class="language-picker" for="language"><span>Idioma / Language</span><select id="language" aria-label="Idioma / Language"><option value="es">Español</option><option value="en">English</option></select></label><span class="version">6.0 · interactivo · sin conexión</span></div></header>
+<div class="shell">
+<aside class="card sidebar"><div class="sidebar-head"><div class="eyebrow">Biblioteca de gráficos base</div><h2>Elige un modelo</h2><input class="search" id="search" type="search" placeholder="Buscar por tema…" aria-label="Buscar por tema"><div class="filters" id="filters"><button class="filter active" data-filter="all">Todos</button><button class="filter" data-filter="2">Micro</button><button class="filter" data-filter="3">Macro</button><button class="filter" data-filter="4">Global</button><button class="filter" data-filter="1">Intro</button><button class="filter" data-filter="hl">NS</button></div></div><nav class="nav" id="nav" aria-label="Modelos"></nav></aside>
+<main class="card main"><div class="main-head"><div><div class="eyebrow" id="topic"></div><h2 id="heading"></h2><p class="sub" id="summary"></p></div><span class="level" id="level"></span></div><div class="chartpad"><div class="chart" id="chart" aria-live="polite"></div></div><div class="statusbar" id="chips" aria-label="Elementos activos"></div><section class="stage-panel" id="stagePanel" hidden aria-live="polite"></section><div class="metrics" id="metrics"></div><div class="actions"><button class="btn primary" id="png">↓ Descargar PNG</button><button class="btn" id="svg">↓ SVG editable</button><button class="btn" id="pdf">Imprimir / PDF</button><button class="btn" id="reset">↺ Reiniciar modelo</button></div></main>
+<aside class="card right"><section class="side-section"><h3>✦ Añadir elementos</h3><p class="helper">Activa componentes sobre un mismo gráfico. Los controles se adaptan al modelo seleccionado.</p><div id="controls"></div></section><section class="side-section"><h3>Personalización</h3><label for="chartTitle" class="helper" style="display:block;margin-bottom:6px">Título del gráfico</label><input id="chartTitle" class="titlefield" placeholder="Usar título del modelo"><label class="checkrow"><input type="checkbox" id="guides" checked> Guías y puntos de equilibrio</label><label class="checkrow"><input type="checkbox" id="values"> Valores en los ejes</label><label class="checkrow"><input type="checkbox" id="grid"> Cuadrícula</label><label class="checkrow"><input type="checkbox" id="mono"> Modo blanco y negro</label></section><section class="side-section"><h3>¿Qué está pasando?</h3><p class="note" id="analysis"></p><div class="formula" id="formula"></div></section><section class="side-section"><h3>Consejo de examen IB</h3><div class="tip" id="tip"></div><p class="hint">Modelos esquemáticos y valores hipotéticos; no sustituyen las explicaciones ni los ejemplos reales de examen o IA. Aplicación independiente, no avalada por el IB.</p></section></aside>
+</div>
+<footer class="footer">Organizado en torno a las unidades del programa de Economía del IB (guía con primera evaluación en 2022). Las intervenciones excluyentes se reemplazan entre sí; las demás capas pueden combinarse. Exporta diagramas con ejes etiquetados y explica los cambios en el contexto de cada pregunta.</footer>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const escapeHtml=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const f=n=>Number.isFinite(n)?(Math.abs(n-Math.round(n))<.045?String(Math.round(n)):n.toFixed(1)):'—';
+const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+
+// The original Spanish strings are retained in data/state; switching languages never resets the model.
+let language='es';
+const TRANSLATIONS={"Construye diagramas, añade intervenciones y compara resultados": "Build diagrams, add interventions and compare outcomes", "6.0 · interactivo · sin conexión": "6.0 · interactive · offline", "NS": "HL", "NM": "SL", "Biblioteca de gráficos base": "Base diagram library", "Elige un modelo": "Choose a model", "Todos": "All", "Introducción": "Introduction", "Microeconomía": "Microeconomics", "Macroeconomía": "Macroeconomics", "Economía global": "The global economy", "Unidad": "Unit", "Unidad 1": "Unit 1", "Unidad 2": "Unit 2", "Unidad 3": "Unit 3", "Unidad 4": "Unit 4", "No se encontraron modelos.": "No matching models.", "Solo NS · HL": "HL only", "NM y NS · SL / HL": "SL and HL", "✦ Añadir elementos": "✦ Add elements", "Activa componentes sobre un mismo gráfico. Los controles se adaptan al modelo seleccionado.": "Add components to the same diagram. Controls adapt to the selected model.", "Personalización": "Customization", "Título del gráfico": "Diagram title", "Guías y puntos de equilibrio": "Equilibrium points and guides", "Valores en los ejes": "Show axis values", "Cuadrícula": "Grid", "Modo blanco y negro": "Black and white mode", "¿Qué está pasando?": "What is happening?", "Consejo de examen IB": "IB exam tip", "Modelos esquemáticos y valores hipotéticos; no sustituyen las explicaciones ni los ejemplos reales de examen o IA. Aplicación independiente, no avalada por el IB.": "Illustrative models and hypothetical values do not replace explanations or real-world examples in exams or the IA. Independent app; not endorsed by the IB.", "Organizado en torno a las unidades del programa de Economía del IB (guía con primera evaluación en 2022). Las intervenciones excluyentes se reemplazan entre sí; las demás capas pueden combinarse. Exporta diagramas con ejes etiquetados y explica los cambios en el contexto de cada pregunta.": "Organized by the IB Economics syllabus (first assessment 2022). Mutually exclusive interventions replace one another; other layers can be combined. Export clearly labelled diagrams and explain changes in the context of each question.", "↓ Descargar PNG": "↓ Download PNG", "↓ SVG editable": "↓ Editable SVG", "Imprimir / PDF": "Print / PDF", "↺ Reiniciar modelo": "↺ Reset model", "ACTIVOS:": "ACTIVE:", "Quitar elemento": "Remove layer", "Solo el gráfico base. Añade elementos desde el panel derecho.": "Only the base diagram is active. Add elements from the right-hand panel.", "Quitar: ": "Remove: ", "Añadir: ": "Add: ", "Desplazar curvas": "Shift curves", "Intervención del gobierno (elige una)": "Government intervention (choose one)", "Análisis y áreas": "Analysis and areas", "Mostrar excedente consumidor/productor": "Show consumer/producer surplus", "Mostrar pérdida de bienestar (si procede)": "Show deadweight loss (where applicable)", "Ajustes avanzados: pendientes / elasticidad": "Advanced: slopes / elasticity", "Demanda": "Demand", "Oferta": "Supply", "Desplazamiento de demanda": "Demand shift", "Desplazamiento de oferta (precio)": "Supply shift", "Subvención": "Subsidy", "Impuesto indirecto": "Indirect tax", "Impuesto": "Tax", "Precio máximo": "Price ceiling", "Precio mínimo": "Price floor", "Subvención por unidad": "Subsidy per unit", "Impuesto por unidad": "Tax per unit", "Pendiente demanda": "Demand slope", "Pendiente oferta": "Supply slope", "Tipo de externalidad": "Externality type", "Negativa de producción": "Negative production", "Positiva de producción": "Positive production", "Negativa de consumo": "Negative consumption", "Positiva de consumo": "Positive consumption", "Valor externo marginal": "Marginal external effect", "Añadir capas": "Add layers", "Óptimo social": "Social optimum", "Pérdida de bienestar": "Deadweight loss", "Impuesto / subvención correctiva": "Corrective tax / subsidy", "Política correctiva": "Corrective policy", "Estructura de mercado": "Market structure", "Monopolio": "Monopoly", "Competencia perfecta (empresa)": "Perfectly competitive firm", "Precio de mercado": "Market price", "Beneficio / pérdida": "Profit / loss", "Eficiencia y pérdida de bienestar": "Efficiency and deadweight loss", "Modelo de oferta agregada": "Aggregate supply model", "DA–OA de corto y largo plazo": "Short- and long-run AD–AS", "OA keynesiana": "Keynesian AS", "Demanda agregada": "Aggregate demand", "OA de corto plazo": "Short-run aggregate supply", "OA de largo plazo": "Long-run aggregate supply", "Brecha de producción": "Output gap", "Políticas de protección (elige una)": "Trade protection (choose one)", "Arancel": "Tariff", "Cuota de importación": "Import quota", "Precio mundial": "World price", "Arancel por unidad": "Tariff per unit", "Importaciones permitidas": "Allowed imports", "Precios y cantidades": "Prices and quantities", "Recaudación/rentas y pérdida neta": "Revenue/quota rents and welfare loss", "Desplazamientos": "Shifts", "Demanda de divisas": "Foreign currency demand", "Oferta de divisas": "Foreign currency supply", "Tipo fijo (intervención)": "Fixed exchange rate (intervention)", "Cambio de demanda": "Demand change", "Cambio de oferta": "Supply change", "Tipo de cambio fijo": "Fixed exchange rate", "Añadir elementos": "Add elements", "Desplazamiento de FPP": "PPF shift", "Puntos A, B y C": "Points A, B and C", "Coste de oportunidad": "Opportunity cost", "Cambio de capacidad": "Capacity change", "Coeficiente de Gini": "Gini coefficient", "Área de desigualdad": "Inequality area", "Participación del 50% inferior": "Bottom 50% income share", "Amplitud del ciclo": "Cycle amplitude", "Tendencia de largo plazo": "Long-run trend", "Cimas, valles y fases": "Peaks, troughs and phases", "Choque de expectativas": "Expectations shock", "Tasa natural (LRPC)": "Natural rate (LRPC)", "Cambio de inflación esperada": "Expected inflation change", "Añadir sectores": "Add sectors", "Gobierno": "Government", "Sistema financiero": "Financial sector", "Sector exterior": "Foreign sector", "Finanzas": "Finance", "Puedes combinar desplazamientos y capas. Solo se admite una política principal a la vez para mantener clara la comparación antes/después.": "Combine shifts and layers. One main policy at a time keeps the before/after comparison clear.", "Demanda desplazada": "Demand shifted", "Oferta desplazada": "Supply shifted", "Excedentes": "Surplus areas", "Cantidades": "Quantities", "Áreas": "Areas", "Choque DA": "AD shift", "Choque OACP": "SRAS shift", "Choque OALP": "LRAS shift", "Área Gini": "Gini area", "Mitad de población": "Half of population", "Beneficio": "Profit", "Eficiencia": "Efficiency", "Desplazamiento FPP": "PPF shift", "Expectativas": "Expectations", "Tipo fijo": "Fixed rate", "Exterior": "Foreign sector", "Puntos": "Points", "Coste": "Cost", "Tendencia": "Trend", "Fases": "Phases", "Precio de equilibrio": "Equilibrium price", "Cantidad de equilibrio": "Equilibrium quantity", "Cambio en cantidad": "Quantity change", "Respecto a E₀": "From E₀", "Cantidad vendida": "Quantity traded", "Q tras intervención": "Quantity after policy", "Precio compradores": "Buyers’ price", "Precio productores": "Sellers’ price", "Precio fijado": "Controlled price", "Vinculante": "Binding", "No vinculante": "Non-binding", "Cantidad demandada": "Quantity demanded", "Cantidad ofrecida": "Quantity supplied", "Equilibrio privado": "Private equilibrium", "Brecha de cantidad": "Quantity gap", "Unidades": "Units", "Producción óptima": "Optimal output", "Precio": "Price", "Pérdida": "Loss", "Económico/a": "Economic", "Producción real": "Real output", "Nivel de precios": "Price level", "Frente al inicial": "Versus initial", "Cambio en producción": "Output change", "Precio interno": "Domestic price", "P doméstico": "Domestic P", "Importaciones": "Imports", "Consumo nacional": "Domestic consumption", "Renta potencial": "Potential quota rent", "Recaudación": "Tariff revenue", "Unidades monetarias": "Currency units", "Tipo de cambio": "Exchange rate", "Cantidad de divisas": "Foreign currency quantity", "Equilibrio": "Equilibrium", "Desajuste con tipo fijo": "Fixed-rate imbalance", "Cambio de TC": "Exchange rate change", "Bien X": "Good X", "Bien Y": "Good Y", "Máximo posible": "Maximum possible", "Escenario": "Scenario", "0 = igualdad perfecta": "0 = perfect equality", "Ingreso del 50% inferior": "Bottom 50% income", "Acumulado": "Cumulative", "Área entre curvas": "Area between curves", "Puntos del cuadrado 100×100": "Points in the 100×100 square", "Amplitud": "Amplitude", "Índice": "Index", "Horizonte": "Horizon", "Periodos abstractos": "Abstract periods", "Tendencia final": "Final trend", "Tasa natural": "Natural rate", "Inflación a uₙ": "Inflation at uₙ", "Corto plazo": "Short run", "Choque": "Shock", "Puntos porcentuales": "Percentage points", "Agentes mostrados": "Agents shown", "Hogares + empresas + otros": "Households + firms + others", "Filtraciones": "Leakages", "Inyecciones": "Injections", "Modelo abierto": "Open economy", "No se pudo exportar el PNG. Prueba SVG.": "PNG export failed. Try SVG.", "No se pudo exportar el PNG. Usa el SVG como alternativa.": "PNG export failed. Use SVG instead.", "Usar título del modelo": "Use model title", "Buscar por tema…": "Search by topic…"};
+const GRAPH_LABELS={"Comercio internacional": "International trade", "Oferta y demanda": "Supply and demand", "Externalidades": "Externalities", "Empresa y estructuras de mercado": "Firms and market structures", "Demanda y oferta agregadas": "Aggregate demand and supply", "Tipos de cambio": "Exchange rates", "FPP": "PPF", "Curva de Lorenz": "Lorenz curve", "Ciclo económico": "Business cycle", "Curva de Phillips": "Phillips curve", "Flujo circular de renta": "Circular flow of income", "Cantidad (Q)": "Quantity (Q)", "Precio (P)": "Price (P)", "Precio/coste/beneficio marginal": "Marginal price/cost/benefit", "Cantidad de divisas": "Quantity of foreign currency", "Moneda nacional / divisa": "Domestic currency / foreign currency unit", "PIB real (Y)": "Real GDP (Y)", "Nivel general de precios (P)": "General price level (P)", "Población acumulada (%)": "Cumulative population (%)", "Ingreso acumulado (%)": "Cumulative income (%)", "Tiempo": "Time", "PIB real (índice)": "Real GDP (index)", "Desempleo (%)": "Unemployment (%)", "Inflación (%)": "Inflation (%)", "Producción de la empresa (Q)": "Firm output (Q)", "Costes, ingresos y precio": "Costs, revenue and price", "Igualdad perfecta": "Perfect equality", "% del ingreso": "% of income", "PIB potencial": "Potential GDP", "PIB real": "Real GDP", "Cima": "Peak", "Valle": "Trough", "Contracción": "Contraction", "Expansión": "Expansion", "Importaciones": "Imports", "D doméstica": "D (domestic)", "S doméstica": "S (domestic)", "Pm": "Pw", "Pm + t": "Pw + t", "P con cuota": "P with quota", "Escasez": "Shortage", "Excedente": "Surplus", "No vinculante": "Non-binding", "P máximo": "Price ceiling", "P mínimo": "Price floor", "S + impuesto": "S + tax", "S − subvención": "S − subsidy", "subv.": "subsidy", "Q eficiente": "Efficient Q", "A · eficiente": "A · efficient", "B · ineficiente": "B · inefficient", "C · inalcanzable": "C · unattainable", "Brecha inflacionaria": "Inflationary gap", "Brecha recesiva": "Recessionary gap", "Sin brecha": "No output gap", "Población acumulada": "Cumulative population", "Ingreso acumulado": "Cumulative income", "HOGARES": "HOUSEHOLDS", "EMPRESAS": "FIRMS", "GOBIERNO": "GOVERNMENT", "SECTOR FINANCIERO": "FINANCIAL SECTOR", "SECTOR EXTERIOR": "FOREIGN SECTOR", "Factores productivos / consumo": "Factors of production / consumption", "Producción / contratación": "Output / hiring", "Trabajo y otros factores": "Labour and other factors", "Salarios, rentas e ingresos": "Wages, rent and income", "Gasto de consumo": "Consumer spending", "Bienes y servicios": "Goods and services", "Impuestos / gasto público": "Taxes / government spending", "Ahorro / inversión": "Saving / investment", "Importaciones / exportaciones": "Imports / exports", "Flujos monetarios y reales · esquema simplificado": "Money and real flows · simplified model", "TC fijo": "Fixed ER", "MPC + impuesto": "MPC + tax", "MPC − subvención": "MPC − subsidy", "MPB + subvención": "MPB + subsidy", "MPB − impuesto": "MPB − tax", "BPM = BSM": "MPB = MSB", "CPM = CSM": "MPC = MSC"};
+const EN_MODEL={"market": ["Supply and demand", "One base market for shifts, indirect taxes, subsidies, price ceilings, price floors and welfare areas.", "A producer subsidy shifts effective supply down/right. A price ceiling causes a shortage only when below equilibrium."], "externality": ["Externalities", "Choose among the four IB cases: positive or negative externalities of production or consumption, then add the social optimum, deadweight loss or a corrective policy.", "Distinguish marginal private/social benefits (MPB/MSB) and costs (MPC/MSC). The relevant social curve depends on whether the externality comes from production or consumption."], "firm": ["Firms and market structures", "Switch between monopoly and a competitive firm; add profit and efficiency layers.", "A monopoly chooses output where MR = MC, then reads price from demand. A competitive firm produces where P = MR = MC, subject to shutdown considerations."], "adas": ["Aggregate demand and supply", "Add as many AD and SRAS/AS curves as you like, in any order. Each step produces exactly one relevant equilibrium.", "Label the vertical axis as the general price level. Every step yields one successive AD–SRAS equilibrium; LRAS identifies potential output, not an extra short-run equilibrium."], "trade": ["International trade", "Start with free trade, then add tariffs or import quotas, imports and welfare effects.", "A tariff raises the domestic price above the world price. Quota rents are not automatically government revenue."], "fx": ["Exchange rates", "Shift currency supply/demand or impose a fixed exchange rate.", "The vertical axis is domestic currency per unit of foreign currency: a higher price indicates domestic-currency depreciation."], "ppf": ["Production possibilities frontier", "Add growth, contraction, points illustrating efficiency and opportunity cost.", "On the frontier: efficient; inside: attainable but inefficient; outside: unattainable with existing resources and technology."], "lorenz": ["Lorenz curve", "An independent model of cumulative income distribution, inequality area and the Gini coefficient.", "The 45° line indicates perfect equality. More bowing indicates greater inequality; Gini = A/(A+B)."], "cycle": ["Business cycle", "An independent diagram showing real GDP, trend and business-cycle phases.", "Distinguish the long-run trend of potential output from short-run fluctuations."], "phillips": ["Phillips curve", "An illustrative inflation–unemployment relationship with expectations and the natural rate.", "A downward-sloping short-run Phillips curve does not imply a stable long-run trade-off."], "circular": ["Circular flow of income", "A standalone model of households and firms, with optional government, finance and foreign sector.", "Identify leakages (saving, taxes, imports) and injections (investment, government spending, exports)."]};
+const FORMULA_EN={"P autarquía": "Autarky price", "P mundial": "World price", "P doméstico": "Domestic price", "Importaciones": "Imports", "Renta de cuota potencial": "Potential quota rent", "Recaudación": "Tariff revenue", "P competitivo": "Competitive price", "Q antes": "Q before", "Q después": "Q after", "Coste fiscal": "Fiscal cost", "Pérdida de bienestar": "Deadweight loss", "Q equilibrio": "Equilibrium Q", "TC equilibrio": "Equilibrium ER", "Desequilibrio a TC fijo": "Imbalance at fixed ER", "Demanda: TC": "Demand: ER", "Oferta: TC": "Supply: ER", "PIB potencial": "Potential GDP", "PIB real": "Real GDP", "Nivel de precios": "Price level", "Equilibrio Y": "Equilibrium Y", "OA keynesiana: función ilustrativa por tramos": "Keynesian AS: illustrative piecewise function", "Beneficio": "Profit", "Efecto externo marginal": "Marginal external effect", "Brecha de cantidad": "Quantity gap", "Tasa natural de desempleo": "Natural unemployment rate", "Filtraciones": "Leakages", "Inyecciones": "Injections", "Ahorro": "Saving", "Impuestos": "Taxes", "Inversión": "Investment", "Gasto público": "Government spending", "Exportaciones": "Exports", "Coeficiente": "Coefficient", "Qm": "Qm", "Q*": "Q*", "DA:": "AD:", "OACP:": "SRAS:", "S:": "S:", "D:": "D:"};
+const tr=value=>language==='en'?(TRANSLATIONS[value]??value):value;
+const itemField=(m,key)=>language==='en'?(EN_MODEL[m.id]?.[['name','desc','tip'].indexOf(key)]??m[key]):m[key];
+function graphTerm(value){
+ if(language!=='en')return value;
+ const text=String(value);
+ if(Object.hasOwn(GRAPH_LABELS,text))return GRAPH_LABELS[text];
+ let match;
+ if((match=/^(DA|OACP|OALP|OA|CPC|CPLP)([₀-₉]*)$/.exec(text)))return ({DA:'AD',OACP:'SRAS',OALP:'LRAS',OA:'AS',CPC:'SRPC',CPLP:'LRPC'}[match[1]])+match[2];
+ if((match=/^(MPB|MSB|MPC|MSC)(.*)$/.exec(text)))return match[1]+match[2].replace('subvención','subsidy').replace('impuesto','tax');
+ if((match=/^([0-9,.]+)% del ingreso$/.exec(text)))return match[1]+'% of income';
+ return text;
+}
+const originalTextNodes=[];
+function rememberStaticTexts(){
+ const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+ let node;
+ while(node=walker.nextNode()){
+  if(node.parentElement?.closest('script,style,#nav,#controls,#chart,#chips,#metrics,#analysis,#formula,#tip,#heading,#topic,#summary,#level'))continue;
+  if(!node.nodeValue.trim())continue;
+  originalTextNodes.push([node,node.nodeValue]);
+ }
+}
+function translateStaticTexts(){
+ for(const [node,original] of originalTextNodes){
+  const m=original.match(/^(\s*)([\s\S]*?)(\s*)$/);
+  node.nodeValue=m[1]+tr(m[2])+m[3];
+ }
+ $('search').placeholder=tr('Buscar por tema…');
+ $('search').setAttribute('aria-label',tr('Buscar por tema…'));
+ $('chartTitle').placeholder=tr('Usar título del modelo');
+ document.documentElement.lang=language;
+}
+function englishFormula(raw){
+ let result=raw;
+ for(const [es,en] of Object.entries(FORMULA_EN).sort((a,b)=>b[0].length-a[0].length))result=result.split(es).join(en);
+ // Formula symbols follow the English-language IB shorthand.
+ result=result.replace(/\bTC\b/g,'ER').replace(/\bDA(?=:)/g,'AD').replace(/\bOACP(?=:)/g,'SRAS');
+ return result;
+}
+
+const ITEMS=[
+{id:'market',unit:2,level:'sl',name:'Oferta y demanda',desc:'Un mercado base para desplazamientos, impuestos, subvenciones, precios máximos y mínimos, y excedentes.',tip:'Una subvención al productor desplaza la oferta efectiva hacia abajo/derecha; un precio máximo solo provoca escasez si está por debajo del equilibrio.',defaults:{dOn:false,dShift:12,sOn:false,sShift:-10,steps:[],nextId:1,welfare:false,dwl:false,bd:.5,bs:.5}},
+{id:'externality',unit:2,level:'sl',name:'Externalidades',desc:'Incluye las 4 externalidades del IB: positiva y negativa, tanto de producción como de consumo; añade óptimo social, pérdida de bienestar e intervención correctiva.',tip:'Selecciona externalidad negativa o positiva de producción o de consumo. El gráfico adapta las curvas MPB, MSB, MPC y MSC y muestra equilibrio de mercado, óptimo social y política correctiva.',defaults:{kind:'negprod',gap:17,opt:true,dwl:true,correction:false,steps:[],nextId:1}},
+{id:'firm',unit:2,level:'hl',name:'Empresa y estructuras de mercado',desc:'Alterna entre monopolio y empresa competitiva, y añade beneficios y eficiencia.',tip:'En monopolio, MR = MC determina la cantidad y la demanda indica el precio. Para competencia perfecta, P = MR = MC en el óptimo de corto plazo.',defaults:{kind:'monopoly',marketPrice:48,profit:true,efficiency:false}},
+{id:'adas',unit:3,level:'sl',name:'Demanda y oferta agregadas',desc:'Añade tantas curvas DA y OACP/OA como necesites, en cualquier orden; cada paso genera solo su equilibrio pertinente.',tip:'Cada intervención se representa por una nueva curva y un único equilibrio sucesivo: E₀ (inicial), E₁ (primer cambio), E₂ (segundo cambio)… La OALP permite señalar la brecha, pero no crea un equilibrio DA–OACP adicional.',defaults:{kind:'classical',steps:[],nextId:1,lrOn:false,lr:10,gap:true}},
+{id:'trade',unit:4,level:'sl',name:'Comercio internacional',desc:'Parte de un mercado abierto y añade aranceles, cuotas, importaciones, ingresos y pérdidas de bienestar.',tip:'El arancel es una diferencia entre el precio mundial y el doméstico. Una cuota puede generar rentas para quienes obtienen licencias, no necesariamente para el gobierno.',defaults:{steps:[],nextId:1,pw:30,areas:true,dwl:false}},
+{id:'fx',unit:4,level:'sl',name:'Tipos de cambio',desc:'Desplaza oferta y demanda de divisas o añade un tipo de cambio fijo.',tip:'Especifica qué se mide en el eje vertical: moneda nacional por unidad de divisa extranjera. Un aumento del precio implica depreciación de la moneda nacional.',defaults:{dOn:false,d:12,sOn:false,s:-10,peg:false,pegPrice:39}},
+{id:'ppf',unit:1,level:'sl',name:'FPP',desc:'Frontera de posibilidades de producción: añade crecimiento, contracción y puntos de eficiencia.',tip:'Puntos sobre la curva son eficientes; dentro, alcanzables pero ineficientes; fuera, inalcanzables con recursos y tecnología dados.',defaults:{growthOn:false,growth:18,points:true,cost:false}},
+{id:'lorenz',unit:3,level:'sl',name:'Curva de Lorenz',desc:'Diagrama individual de distribución acumulada de ingresos, área de desigualdad y coeficiente de Gini.',tip:'La diagonal representa igualdad perfecta; cuanto mayor es la distancia hacia abajo, mayor es la desigualdad. Gini = A/(A+B).',defaults:{gini:.35,shade:true,median:true}},
+{id:'cycle',unit:3,level:'sl',name:'Ciclo económico',desc:'Gráfico individual de PIB real, tendencia, expansiones y contracciones.',tip:'Explica la diferencia entre crecimiento tendencial de largo plazo y variaciones cíclicas de la actividad económica.',defaults:{amplitude:14,trend:true,phases:true}},
+{id:'phillips',unit:3,level:'hl',name:'Curva de Phillips',desc:'Relación ilustrativa entre inflación y desempleo con expectativas y tasa natural.',tip:'Una curva de Phillips de corto plazo con pendiente descendente no implica un intercambio estable de largo plazo.',defaults:{shockOn:false,shock:3,natural:true}},
+{id:'circular',unit:3,level:'sl',name:'Flujo circular de renta',desc:'Diagrama individual de hogares, empresas y sectores adicionales como gobierno y exterior.',tip:'Identifica filtraciones (ahorro, impuestos e importaciones) e inyecciones (inversión, gasto público y exportaciones).',defaults:{gov:true,finance:true,foreign:true}}
+];
+const UNITS={1:'Introducción',2:'Microeconomía',3:'Macroeconomía',4:'Economía global'};
+const PAL={blue:'#2c66d5',red:'#cf5262',teal:'#088b78',purple:'#7652b6',gold:'#d59a25',slate:'#78879c',ink:'#263c5d',gray:'#c0c9d5'};
+let current='market',filter='all',state={},svgText='',exportName='';
+function defState(id){return JSON.parse(JSON.stringify(ITEMS.find(m=>m.id===id).defaults))}
+function st(){return state[current]||(state[current]=defState(current))}
+function item(){return ITEMS.find(m=>m.id===current)}
+function options(){return {guides:$('guides').checked,values:$('values').checked,grid:$('grid').checked,mono:$('mono').checked}}
+function select(id){current=id;if(!state[id])state[id]=defState(id);$('chartTitle').value=state[id]._title||'';$('heading').textContent=itemField(item(),'name');$('summary').textContent=itemField(item(),'desc');$('topic').textContent=(language==='en'?'Unit ':'Unidad ')+item().unit+' · '+tr(UNITS[item().unit]);$('level').textContent=item().level==='hl'?tr('Solo NS · HL'):tr('NM y NS · SL / HL');$('tip').textContent=itemField(item(),'tip');drawNav();drawControls();drawGraph()}
+function drawNav(){const term=$('search').value.toLowerCase();let valid=ITEMS.filter(m=>(filter==='all'||(filter==='hl'?m.level==='hl':String(m.unit)===filter))&&(m.name+' '+m.desc+' '+itemField(m,'name')+' '+itemField(m,'desc')+' '+UNITS[m.unit]+' '+tr(UNITS[m.unit])).toLowerCase().includes(term));let html='';for(const unit of [1,2,3,4]){const group=valid.filter(m=>m.unit===unit);if(!group.length)continue;html+=`<div class="nav-group">${language==='en'?'Unit':'Unidad'} ${unit} · ${tr(UNITS[unit])}</div>`+group.map(m=>`<button class="nav-item ${current===m.id?'active':''}" data-select="${m.id}" aria-current="${current===m.id?'page':'false'}"><span>${escapeHtml(itemField(m,'name'))}</span><span class="tag ${m.level==='hl'?'hl':''}">${m.level==='hl'?'NS':'NM'}</span></button>`).join('')}if(!html)html='<div class="helper" style="padding:12px">'+tr('No se encontraron modelos.')+'</div>';$('nav').innerHTML=html}
+function buttons(title,arr,key,mode='one'){const s=st();return `<div class="sectiontitle">${tr(title)}</div><div class="action-grid">${arr.map(([val,label,emoji])=>{const active=mode==='one'?s[key]===val:!!s[val];return `<button class="addbtn ${active?'active':''}" type="button" data-${mode==='one'?'pick':'toggle'}="${mode==='one'?key:val}" ${mode==='one'?`data-val="${val}"`:''} aria-pressed="${active}"><span class="addicon">${active?'✓':emoji||'+'}</span><span>${tr(active?'Quitar: ':'Añadir: ')}${escapeHtml(tr(label))}</span></button>`}).join('')}</div>`}
+function slider(key,label,min,max,step,suffix=''){const val=st()[key];return `<div class="range"><div class="rangehead"><label for="slider-${key}">${escapeHtml(tr(label))}</label><strong id="read-${key}">${f(val)}${escapeHtml(suffix)}</strong></div><input id="slider-${key}" type="range" min="${min}" max="${max}" step="${step}" value="${val}" data-range="${key}" aria-label="${escapeHtml(tr(label))}"><div class="rangeends"><span>${min}${escapeHtml(suffix)}</span><span>${max}${escapeHtml(suffix)}</span></div></div>`}
+function tick(key,label){return `<label class="checkrow"><input type="checkbox" data-check="${key}" ${st()[key]?'checked':''}> ${escapeHtml(tr(label))}</label>`}
+function dropdown(key,label,vals){return `<div class="sectiontitle">${tr(label)}</div><select class="choice" data-choice="${key}" aria-label="${escapeHtml(tr(label))}">${vals.map(([v,lab])=>`<option value="${v}" ${st()[key]===v?'selected':''}>${escapeHtml(tr(lab))}</option>`).join('')}</select>`}
+function subNum(num){return String(num).replace(/[0-9]/g,x=>'₀₁₂₃₄₅₆₇₈₉'[Number(x)])}
+function localText(es,en){return language==='en'?en:es}
+function macroControls(s){
+ let html=dropdown('kind','Modelo de oferta agregada',[['classical','DA–OA de corto y largo plazo'],['keynesian','OA keynesiana']]);
+ html+=`<div class="sectiontitle">${escapeHtml(localText('Añadir desplazamientos en orden','Add shifts in order'))}</div>`;
+ html+=`<div class="macro-add"><button type="button" data-addcurve="ad">＋ ${localText('Añadir DA','Add AD')}</button><button type="button" data-addcurve="as">＋ ${s.kind==='classical'?localText('Añadir OACP','Add SRAS'):localText('Añadir OA','Add AS')}</button></div>`;
+ if(!s.steps.length)html+=`<p class="helper">${escapeHtml(localText('Comienza con DA₀ y OACP₀. Cada clic añade otra curva y solo el equilibrio de esa etapa.', 'Start with AD₀ and SRAS₀. Each click adds a curve and only that step’s equilibrium.'))}</p>`;
+ for(let i=0;i<s.steps.length;i++){
+  const step=s.steps[i], kind=step.kind==='ad'?localText('DA','AD'):(s.kind==='classical'?localText('OACP','SRAS'):localText('OA','AS'));
+  const min=step.kind==='ad'?-22:-18,max=step.kind==='ad'?22:18;
+  const label=step.kind==='ad'?localText('Cambio de demanda agregada','Aggregate demand shift'):localText('Cambio vertical de oferta agregada','Aggregate supply vertical shift');
+  html+=`<div class="macro-step" data-step-card="${step.id}"><div class="macro-step-head"><span class="macro-step-title">${i+1}. ${kind} ${localText('→','→')} E${subNum(i+1)}</span><div class="macro-step-actions"><button type="button" data-move-step="${step.id}" data-direction="-1" ${i===0?'disabled':''} title="${localText('Mover arriba','Move up')}" aria-label="${localText('Mover arriba','Move up')}">↑</button><button type="button" data-move-step="${step.id}" data-direction="1" ${i===s.steps.length-1?'disabled':''} title="${localText('Mover abajo','Move down')}" aria-label="${localText('Mover abajo','Move down')}">↓</button><button type="button" data-remove-step="${step.id}" title="${localText('Eliminar curva','Remove curve')}" aria-label="${localText('Eliminar curva','Remove curve')}">×</button></div></div><div class="rangehead" style="margin-top:9px"><label for="step-${step.id}">${label}</label><strong id="read-step-${step.id}">${f(step.delta)}</strong></div><input type="range" id="step-${step.id}" data-step-value="${step.id}" min="${min}" max="${max}" step="1" value="${step.delta}" aria-label="${escapeHtml(label)} ${i+1}"><div class="macro-minmax"><span>${min}</span><span>${max}</span></div></div>`;
+ }
+ html+=`<p class="hint">${escapeHtml(localText('Las curvas anteriores se conservan punteadas. E₀ es inicial; E₁, E₂… se calculan tras cada acción, sin cruces hipotéticos que no hayan ocurrido.', 'Earlier curves remain dashed. E₀ is initial; E₁, E₂… are calculated after each action, with no hypothetical intersections that never occurred.'))}</p>`;
+ if(s.kind==='classical')html+=buttons('OALP y brecha de producción',[['lrOn','Desplazar OALP','↔']],'','multi')+(s.lrOn?slider('lr','Cambio de PIB potencial',-18,18,1):'');
+ html+=tick('gap','Señalar brecha de producción');
+ return html;
+}
+const POLICY_TYPES={
+ tax:{es:'Impuesto indirecto',en:'Indirect tax',default:10,min:1,max:30,unit:'money'},
+ subsidy:{es:'Subvención',en:'Subsidy',default:10,min:1,max:30,unit:'money'},
+ ceiling:{es:'Precio máximo',en:'Price ceiling',default:38,min:5,max:100,unit:'price'},
+ floor:{es:'Precio mínimo',en:'Price floor',default:60,min:5,max:100,unit:'price'},
+ tariff:{es:'Arancel',en:'Tariff',default:7,min:1,max:25,unit:'money'},
+ quota:{es:'Cuota de importación',en:'Import quota',default:55,min:0,max:110,unit:'quantity'}
+};
+function policyTitle(kind){const t=POLICY_TYPES[kind];return t?localText(t.es,t.en):kind;}
+function policyControls(s,model){
+ const kinds=model==='market'?['tax','subsidy','ceiling','floor']:model==='externality'?['tax','subsidy']:['tariff','quota'];
+ let html=`<div class="sectiontitle">${localText('Añadir intervenciones sucesivas','Add successive interventions')}</div><div class="policy-add">`;
+ for(const kind of kinds){html+=`<button type="button" data-add-policy="${kind}">＋ ${escapeHtml(policyTitle(kind))}</button>`;}
+ html+='</div>';
+ if(!s.steps?.length)html+=`<p class="helper">${localText('Añade varios niveles, combina políticas y ajusta cada uno de forma independiente.','Add multiple levels, combine policies, and adjust each independently.')}</p>`;
+ for(let i=0;i<(s.steps||[]).length;i++){
+  const step=s.steps[i],cfg=POLICY_TYPES[step.kind];
+  if(!cfg)continue;
+  html+=`<div class="macro-step" data-policy-card="${step.id}"><div class="macro-step-head"><span class="macro-step-title">${i+1}. ${escapeHtml(policyTitle(step.kind))} · ${localText('etapa','stage')} ${subNum(i+1)}</span><div class="macro-step-actions"><button type="button" data-move-policy="${step.id}" data-direction="-1" ${i===0?'disabled':''} aria-label="${localText('Mover arriba','Move up')}">↑</button><button type="button" data-move-policy="${step.id}" data-direction="1" ${i===s.steps.length-1?'disabled':''} aria-label="${localText('Mover abajo','Move down')}">↓</button><button type="button" data-remove-policy="${step.id}" aria-label="${localText('Eliminar intervención','Remove intervention')}">×</button></div></div><div class="rangehead" style="margin-top:10px"><label for="policy-${step.id}">${escapeHtml(policyTitle(step.kind))} (${cfg.unit==='quantity'?'Q':cfg.unit==='price'?'P':localText('por unidad','per unit')})</label><strong id="read-policy-${step.id}">${f(step.value)}</strong></div><input type="range" data-policy-value="${step.id}" id="policy-${step.id}" min="${cfg.min}" max="${cfg.max}" step="1" value="${step.value}" aria-label="${escapeHtml(policyTitle(step.kind))} ${i+1}"><div class="macro-minmax"><span>${cfg.min}</span><span>${cfg.max}</span></div></div>`;
+ }
+ if(s.steps?.length)html+=`<button type="button" class="btn small-clear" data-clear-policies="1">${localText('Eliminar todas las intervenciones','Clear all interventions')}</button>`;
+ html+=`<p class="hint">${model==='market'?localText('Los impuestos y subvenciones se suman por unidad. Entre varios precios máximos rige el menor; entre precios mínimos, el mayor. Un mínimo superior al máximo es incompatible.','Per-unit taxes and subsidies accumulate. The lowest ceiling and highest floor apply; a floor above the ceiling is inconsistent.'):model==='externality'?localText('Las políticas se suman por unidad. Un impuesto reduce la cantidad; una subvención la aumenta. Puedes comprobar si corrigen o empeoran la externalidad.','Policies accumulate per unit. Taxes reduce quantity and subsidies increase it. Check whether they correct or worsen the externality.'):localText('Los aranceles se acumulan. La cuota más restrictiva limita las importaciones. Si coexisten, el modelo calcula recaudación y renta de cuota por separado.','Tariffs accumulate. The tightest quota limits imports. When combined, the model calculates tariff revenue and quota rent separately.')}</p>`;
+ return html;
+}
+function drawControls(){const s=st();let html='';switch(current){
+case'market':html+=buttons('Desplazar curvas',[['dOn','Demanda','↗'],['sOn','Oferta','↗']],'','multi');if(s.dOn)html+=slider('dShift','Desplazamiento de demanda',-18,18,1);if(s.sOn)html+=slider('sShift','Desplazamiento de oferta (precio)',-18,18,1);html+=policyControls(s,'market');html+='<div class="sectiontitle">'+tr('Análisis y áreas')+'</div>'+tick('welfare','Mostrar excedente consumidor/productor')+tick('dwl','Mostrar pérdida de bienestar (si procede)')+'<details style="margin-top:9px"><summary class="helper" style="cursor:pointer">'+tr('Ajustes avanzados: pendientes / elasticidad')+'</summary>'+slider('bd','Pendiente demanda',.4,.9,.05)+slider('bs','Pendiente oferta',.4,.9,.05)+'</details>';break;
+case'externality':html+=dropdown('kind','Tipo de externalidad (4 casos IB)',[['negprod','Negativa de producción'],['posprod','Positiva de producción'],['negcons','Negativa de consumo'],['poscons','Positiva de consumo']])+slider('gap','Valor externo marginal',5,24,1)+policyControls(s,'externality')+buttons('Añadir capas',[['opt','Óptimo social','◎'],['dwl','Pérdida de bienestar','△']],'','multi');break;
+case'firm':html+=dropdown('kind','Estructura de mercado',[['monopoly','Monopolio'],['competitive','Competencia perfecta (empresa)']]);if(s.kind==='competitive')html+=slider('marketPrice','Precio de mercado',35,65,1);html+=buttons('Añadir capas',[['profit','Beneficio / pérdida','▧'],['efficiency','Eficiencia y pérdida de bienestar','△']],'','multi');break;
+case'adas':html+=macroControls(s);break;
+case'trade':html+=slider('pw','Precio mundial',20,36,1)+policyControls(s,'trade')+buttons('Añadir capas',[['areas','Precios y cantidades','⇢'],['dwl','Recaudación/rentas y pérdida neta','△']],'','multi');break;
+case'fx':html+=buttons('Desplazamientos',[['dOn','Demanda de divisas','↗'],['sOn','Oferta de divisas','↗'],['peg','Tipo fijo (intervención)','━']],'','multi');if(s.dOn)html+=slider('d','Cambio de demanda',-20,20,1);if(s.sOn)html+=slider('s','Cambio de oferta',-20,20,1);if(s.peg)html+=slider('pegPrice','Tipo de cambio fijo',27,71,1);break;
+case'ppf':html+=buttons('Añadir elementos',[['growthOn','Desplazamiento de FPP','↗'],['points','Puntos A, B y C','●'],['cost','Coste de oportunidad','∂']],'','multi');if(s.growthOn)html+=slider('growth','Cambio de capacidad',-25,25,1,'%');break;
+case'lorenz':html+=slider('gini','Coeficiente de Gini',0,.65,.01)+buttons('Añadir capas',[['shade','Área de desigualdad','▨'],['median','Participación del 50% inferior','◎']],'','multi');break;
+case'cycle':html+=slider('amplitude','Amplitud del ciclo',5,24,1)+buttons('Añadir capas',[['trend','Tendencia de largo plazo','━'],['phases','Cimas, valles y fases','◎']],'','multi');break;
+case'phillips':html+=buttons('Añadir capas',[['shockOn','Choque de expectativas','↗'],['natural','Tasa natural (LRPC)','│']],'','multi');if(s.shockOn)html+=slider('shock','Cambio de inflación esperada',-4,4,.5);break;
+case'circular':html+=buttons('Añadir sectores',[['gov','Gobierno','▣'],['finance','Sistema financiero','◈'],['foreign','Sector exterior','◎']],'','multi');break;
+}if(current==='market'||current==='externality'||current==='trade')html+='<p class="hint">'+tr('Puedes combinar desplazamientos y capas. Solo se admite una política principal a la vez para mantener clara la comparación antes/después.')+'</p>';$('controls').innerHTML=html}
+function color(key){return options().mono?(key==='gray'?'#bac2cc':key==='slate'?'#6c7786':'#28374c'):PAL[key]||key}
+function plot(title,xlabel='Cantidad (Q)',ylabel='Precio (P)',xMax=120,yMax=110){const x0=100,x1=827,y0=455,y1=60,W=900,H=525,X=q=>x0+q/xMax*(x1-x0),Y=p=>y0-p/yMax*(y0-y1);let layers=[];const c=(key)=>color(key);let plotId='clip1';
+const txt=(x,y,t,opts={})=>`<text x="${x.toFixed(2)}" y="${y.toFixed(2)}" fill="${c(opts.color||'ink')}" font-size="${opts.size||14}" font-family="Arial,Helvetica,sans-serif" font-weight="${opts.weight||500}" ${opts.anchor?`text-anchor="${opts.anchor}"`:''} ${opts.rot?`transform="rotate(${opts.rot} ${x} ${y})"`:''} ${opts.auto?`data-label-kind="curve" data-home-x="${x.toFixed(2)}" data-home-y="${y.toFixed(2)}"`:``} ${opts.halo?`paint-order="stroke" stroke="#fff" stroke-width="5" stroke-linejoin="round"`:``}>${escapeHtml(graphTerm(t))}</text>`;
+function label(q,p,t,opts={}){if(!Number.isFinite(q)||!Number.isFinite(p))return;layers.push(txt(X(q)+(opts.dx||0),Y(p)+(opts.dy||0),t,{...opts,halo:true}))}
+function line(q1,p1,q2,p2,key='slate',opts={}){layers.push(`<line x1="${X(q1)}" y1="${Y(p1)}" x2="${X(q2)}" y2="${Y(p2)}" stroke="${c(key)}" stroke-width="${opts.width||2}" ${opts.dash?'stroke-dasharray="7 6"':''} ${opts.opacity!==undefined?`opacity="${opts.opacity}"`:''} ${opts.arrow?'marker-end="url(#smallarrow)"':''} clip-path="url(#${plotId})"/>`)}
+function curve(fn,name='',key='blue',opts={}){let d='',visible=false;const step=xMax/300;for(let i=0;i<=300;i++){let q=i*step,p=fn(q);if(Number.isFinite(p)){d+=(visible?' L':'M')+X(q).toFixed(2)+','+Y(p).toFixed(2);visible=true}else visible=false}layers.push(`<path d="${d}" fill="none" stroke="${c(key)}" stroke-width="${opts.width||3.4}" ${opts.dash?'stroke-dasharray="9 6"':''} opacity="${opts.opacity??1}" clip-path="url(#${plotId})"/>`);if(name){let q=opts.at??xMax*.81,py=fn(q);if(Number.isFinite(py)&&py>=-2&&py<=yMax+2)label(q,py,name,{dx:opts.dx??8,dy:opts.dy??-10,color:key,weight:750,size:opts.size||15,anchor:opts.anchor,auto:true})}}
+function polygon(points,key='gold',opacity=.25){layers.push(`<polygon points="${points.map(pt=>`${X(pt[0]).toFixed(2)},${Y(pt[1]).toFixed(2)}`).join(' ')}" fill="${c(key)}" opacity="${opacity}" clip-path="url(#${plotId})"/>`)}
+function rect(q1,p1,q2,p2,key='gold',opacity=.2){polygon([[q1,p1],[q2,p1],[q2,p2],[q1,p2]],key,opacity)}
+function dot(q,p,key='teal',radius=5){layers.push(`<circle cx="${X(q)}" cy="${Y(p)}" r="${radius}" fill="${c(key)}" stroke="white" stroke-width="1.5" clip-path="url(#${plotId})"/>`)}
+function guide(q,price,tag='',suffix='e',key='teal'){if(!options().guides)return;line(q,0,q,price,'slate',{dash:true,width:1.2,opacity:.8});line(0,price,q,price,'slate',{dash:true,width:1.2,opacity:.8});dot(q,price,key);label(q,0,'Q'+suffix,{dy:26,anchor:'middle',color:'ink',size:13});label(0,price,'P'+suffix,{dx:-12,dy:4,anchor:'end',color:'ink',size:13});if(tag)label(q,price,tag,{dx:9,dy:-9,weight:700,color:key})}
+function custom(x,y,value,opts={}){layers.push(txt(x,y,value,opts))}
+function finish(){const o=options();let bg=`<rect width="${W}" height="${H}" fill="#fff"/>`;let grid='';if(o.grid){for(let i=1;i<=5;i++){let x=x0+(x1-x0)*i/5,y=y0-(y0-y1)*i/5;grid+=`<path d="M${x} ${y1} V${y0} M${x0} ${y} H${x1}" stroke="#e9eef5" stroke-width="1"/>`}}let ticks='';if(o.values){for(let i=0;i<=5;i++){let q=i*xMax/5,pr=i*yMax/5;ticks+=txt(X(q),y0+18,f(q),{size:11,anchor:'middle',color:'slate'});if(i>0)ticks+=txt(x0-9,Y(pr)+4,f(pr),{size:11,anchor:'end',color:'slate'})}}let axes=`<path d="M${x0} ${y1-8} V${y0} H${x1+13}" stroke="${c('ink')}" stroke-width="2.5" fill="none" marker-start="url(#axisArrow)" marker-end="url(#axisArrow)"/>`;let labels=txt((x0+x1)/2,510,xlabel,{anchor:'middle',weight:650,size:16})+txt(30,(y1+y0)/2,ylabel,{anchor:'middle',rot:-90,size:16,weight:650})+txt(x0,32,title,{weight:800,size:17});return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${language==='en'?'Economic diagram':'Diagrama económico'}: ${escapeHtml(title)}"><defs><clipPath id="${plotId}"><rect x="${x0}" y="${y1}" width="${x1-x0}" height="${y0-y1}"/></clipPath><marker id="axisArrow" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto-start-reverse"><path d="M0 0 L6 3.5 L0 7" fill="none" stroke="${c('ink')}" stroke-width="1.2"/></marker><marker id="smallarrow" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6" fill="${c('ink')}"/></marker></defs>${bg}${grid}${axes}${layers.join('')}${ticks}${labels}</svg>`}
+return {X,Y,txt,label,line,curve,polygon,rect,dot,guide,custom,finish,raw:s=>layers.push(s)} }
+function metrics(arr){return arr.slice(0,3)}
+function calcMarketStages(s){
+ const di=82+(s.dOn?s.dShift:0),si=16+(s.sOn?s.sShift:0),bd=s.bd,bs=s.bs;
+ let taxes=0,subsidies=0,ceiling=Infinity,floor=-Infinity;
+ const stages=[];
+ function snapshot(step=null){
+  const net=taxes-subsidies,raw=(di-si-net)/(bd+bs),validQ=raw>0;
+  const qFree=Math.max(0,raw),pbFree=validQ?di-bd*qFree:null,psFree=validQ?si+bs*qFree:null;
+  const conflict=floor>ceiling;
+  let binding='',price=pbFree,qD=qFree,qS=qFree,traded=qFree;
+  if(!conflict&&validQ){
+   if(ceiling<pbFree-0.0001){binding='ceiling';price=ceiling;}
+   else if(floor>pbFree+0.0001){binding='floor';price=floor;}
+   if(binding){qD=Math.max(0,(di-price)/bd);qS=Math.max(0,(price-si-net)/bs);traded=Math.min(qD,qS);}
+  }
+  if(conflict||!validQ){price=null;qD=null;qS=null;traded=0;}
+  return {i:stages.length,kind:step?.kind||'base',value:step?.value||0,di,si,bd,bs,net,taxes,subsidies,ceiling,floor,conflict,validQ,qFree,pbFree,psFree,binding,price,qD,qS,traded};
+ }
+ stages.push(snapshot());
+ for(const step of (s.steps||[])){
+  if(step.kind==='tax')taxes+=step.value;
+  else if(step.kind==='subsidy')subsidies+=step.value;
+  else if(step.kind==='ceiling')ceiling=Math.min(ceiling,step.value);
+  else if(step.kind==='floor')floor=Math.max(floor,step.value);
+  stages.push(snapshot(step));
+ }
+ return stages;
+}
+function market(s,title){
+ const stages=calcMarketStages(s),last=stages.at(-1),first=stages[0],di=last.di,si=last.si,bd=s.bd,bs=s.bs;
+ const demand=q=>di-bd*q,rawSupply=q=>si+bs*q;
+ const quantityBound=Math.max(110,...stages.map(t=>Math.max(t.qFree||0,t.qD||0,t.qS||0)));
+ const xMax=Math.max(120,Math.ceil((quantityBound*1.17+8)/10)*10);
+ const yMax=Math.max(105,Math.ceil((Math.max(di,si+45,...stages.map(t=>Math.max(t.price||0,t.pbFree||0)))+15)/10)*10);
+ const g=plot(title,'Cantidad (Q)','Precio (P)',xMax,yMax);
+ const nets=[];for(const t of stages.slice(1)){if(!['tax','subsidy'].includes(t.kind)||Math.abs(t.net)<.00001)continue;const found=nets.find(v=>Math.abs(v.net-t.net)<.00001);if(found){found.versions.push(t.i);found.i=t.i;}else nets.push({i:t.i,net:t.net,versions:[t.i]});}
+ nets.sort((a,b)=>a.i-b.i);const finalNet=last.net;
+ if(s.welfare&&last.validQ&&!last.conflict&&!last.binding){g.polygon([[0,di],[0,last.pbFree],[last.qFree,last.pbFree]],'blue',.1);g.polygon([[0,si],[0,last.psFree],[last.qFree,last.psFree]],'red',.1);}
+ if(s.dwl&&last.validQ&&!last.conflict&&!last.binding&&Math.abs(finalNet)>.01){g.polygon([[first.qFree,first.pbFree],[last.qFree,last.pbFree],[last.qFree,last.psFree]],'gold',.21);}
+ if(s.dOn)g.curve(q=>82-bd*q,'D₀','slate',{dash:true,at:xMax*.60,size:12});
+ if(s.sOn)g.curve(q=>16+bs*q,'S₀','slate',{dash:true,at:xMax*.62,size:12});
+ g.curve(demand,s.dOn?'D₁':'D','blue',{at:xMax*.76});
+ g.curve(rawSupply,s.sOn?'S₁':'S','red',{at:xMax*.70,dy:-13});
+ // An effective supply is the price paid by buyers, after all active taxes and subsidies.
+ for(let n=0;n<nets.length;n++){const v=nets[n],latest=Math.abs(v.net-last.net)<.00001;g.curve(q=>rawSupply(q)+v.net,'S'+v.versions.map(subNum).join('/')+' · '+(v.net>=0?'+t':'−sub'),'gold',{dash:!latest,at:Math.min(xMax*.55+n%4*xMax*.04,xMax*.80),dy:latest?-13:17,size:12,opacity:latest?1:.7});}
+ // Annotations for every introduced price rule; inactive levels remain as history.
+ for(const t of stages.slice(1)){
+  if(t.kind!=='floor'&&t.kind!=='ceiling')continue;
+  g.line(0,t.value,xMax,t.value,t.i===last.i?'purple':'slate',{dash:t.i!==last.i,width:t.i===last.i?2.3:1.4,opacity:t.i===last.i?1:.64});
+  g.label(xMax*.82,t.value,(t.kind==='ceiling'?'P máximo':'P mínimo')+' '+subNum(t.i),{dy:-9,color:t.i===last.i?'purple':'slate',size:12,weight:700});
+ }
+ // Every historical market clearing intersection is a real step outcome; bindings do not create an imaginary equilibrium.
+ if(options().guides){
+  for(const t of stages){
+   if(!t.validQ||t.conflict||t.binding)continue;
+   const same=stages.filter(z=>z.validQ&&!z.conflict&&!z.binding&&Math.abs(z.qFree-t.qFree)<.025&&Math.abs(z.pbFree-t.pbFree)<.025);
+   if(same[0]!==t)continue;
+   const suffix=same.map(z=>subNum(z.i)).join('/');
+   const accent=same.some(z=>z===last)?'teal':t.i===0?'slate':'blue';
+   g.line(t.qFree,0,t.qFree,t.pbFree,'slate',{dash:true,width:1.1,opacity:.5});
+   g.line(0,t.pbFree,t.qFree,t.pbFree,'slate',{dash:true,width:1.1,opacity:.5});
+   g.dot(t.qFree,t.pbFree,accent,5);
+   g.label(t.qFree,t.pbFree,'E'+suffix,{dx:9,dy:-9,color:accent,weight:800,size:13});
+   g.label(t.qFree,0,'Q'+suffix,{anchor:'middle',dy:25,color:'ink',size:12});
+   g.label(0,t.pbFree,'P'+suffix,{anchor:'end',dx:-10,dy:4,color:'ink',size:12});
+  }
+  if(last.validQ&&!last.conflict&&last.binding){
+   const i=subNum(last.i);g.line(0,last.price,xMax,last.price,'purple',{dash:true,width:2.5});
+   for(const [q,code,col] of [[last.qS,'Qs','red'],[last.qD,'Qd','blue']]){g.line(q,0,q,last.price,'slate',{dash:true,width:1.2});g.dot(q,last.price,col,5);g.label(q,0,code+i,{dy:25,anchor:'middle',size:12});}
+   g.label(0,last.price,'P'+i,{dx:-10,dy:4,anchor:'end',size:13});
+   if(Math.abs(last.qD-last.qS)>2)g.label((last.qD+last.qS)/2,last.price,last.qD>last.qS?'Escasez':'Excedente',{anchor:'middle',dy:last.qD>last.qS?21:-12,size:12,color:'purple'});
+  }
+  if(last.validQ&&!last.conflict&&Math.abs(last.net)>.001){
+   const q=last.binding?last.traded:last.qFree,ps=last.binding?last.price-last.net:last.psFree,pb=last.binding?last.price:last.pbFree;
+   g.line(q,ps,q,pb,'purple',{width:3});g.dot(q,ps,'purple',4);
+   g.line(0,ps,q,ps,'purple',{dash:true,width:1.0,opacity:.5});
+   g.label(0,ps,'Ps'+subNum(last.i),{dx:-10,dy:4,anchor:'end',size:12,color:'purple'});
+  }
+ }
+ const status=last.conflict?localText('Controles contradictorios: el precio mínimo efectivo supera el máximo. No hay una asignación de mercado coherente bajo ambos.','Conflicting controls: the effective floor exceeds the ceiling. No consistent market allocation is possible under both.'):!last.validQ?localText('La cuña impositiva neta es tan alta que no existe intercambio positivo en el modelo.','The net tax wedge is too large for positive trade in this model.'):last.binding?(last.binding==='ceiling'?localText('Precio máximo vinculante: escasez','Binding ceiling: shortage'):localText('Precio mínimo vinculante: excedente','Binding floor: surplus')):localText('Equilibrio competitivo','Competitive equilibrium');
+ const analysis=`${localText('Se aplicaron','Applied')} ${stages.length-1} ${localText('intervenciones sucesivas','successive interventions')}. ${status}. ${localText('Impuestos acumulados','Cumulative taxes')}: ${f(last.taxes)}; ${localText('subvenciones acumuladas','cumulative subsidies')}: ${f(last.subsidies)}. ${last.validQ&&!last.conflict?`${localText('Precio de compradores','Buyer price')}: ${f(last.price)}; ${localText('cantidad intercambiada','quantity traded')}: ${f(last.traded)}.`:''}`;
+ const allLines=stages.map(t=>`#${t.i} ${t.kind==='base'?localText('Base','Base'):policyTitle(t.kind)}: ${last.conflict&&t===last?localText('incompatible','incompatible'):!t.validQ||t.conflict?'—':`Pb=${f(t.price)}, Ps=${f(t.price-t.net)}, Q=${f(t.traded)}`}`).join('\n');
+ const formula=`D: P = ${f(di)} − ${f(bd)}Q\nS: P = ${f(si)} + ${f(bs)}Q\n${localText('Impuesto neto por unidad','Net tax per unit')} = ${f(last.net)}\n${allLines}`;
+ const fiscal=last.validQ&&!last.conflict?last.taxes*last.traded:0,subCost=last.validQ&&!last.conflict?last.subsidies*last.traded:0;
+ return {svg:g.finish(),analysis,analysisEn:analysis,formula,formulaEn:formula,stages,stats:metrics([[localText('Precio compradores','Buyer price'),last.price===null?'—':f(last.price),'Pb'],[localText('Cantidad intercambiada','Quantity traded'),f(last.traded),'Q'],[localText('Recaudación / subvenciones','Tax revenue / subsidies'),f(fiscal)+' / '+f(subCost),localText('Valor fiscal total','Total fiscal value')]])};
+}
+function externality(s,title){
+ const gap=s.gap,positive=s.kind.startsWith('pos'),production=s.kind.endsWith('prod'),sign=positive?1:-1;
+ const qopt=70+sign*gap,mpc=q=>14+.5*q,mpb=q=>84-.5*q,msc=q=>mpc(q)+(production?-sign*gap:0),msb=q=>mpb(q)+(!production?sign*gap:0);
+ const stages=[{i:0,kind:'base',value:0,net:0,q:70,pb:49,ps:49}];let net=0;
+ for(const step of (s.steps||[])){net+=step.kind==='tax'?step.value:-step.value;const q=Math.max(0,70-net);stages.push({i:stages.length,kind:step.kind,value:step.value,net,q,pb:mpb(q),ps:mpc(q)});}
+ const last=stages.at(-1),xMax=Math.max(125,Math.ceil((Math.max(qopt,...stages.map(t=>t.q))+15)/10)*10),g=plot(title,'Cantidad (Q)','Precio/coste/beneficio marginal',xMax,110);
+ if(s.dwl&&Math.abs(qopt-last.q)>.01)g.polygon([[last.q,msb(last.q)],[last.q,msc(last.q)],[qopt,msc(qopt)]],'gold',.30);
+ g.curve(mpb,production?'MPB = MSB':'MPB','blue',{at:xMax*.73});g.curve(mpc,production?'MPC':'MPC = MSC','red',{at:xMax*.71});
+ if(production)g.curve(msc,'MSC','purple',{at:xMax*.77,dy:-13});else g.curve(msb,'MSB','purple',{at:xMax*.67,dy:-14});
+ const unique=[];
+ for(const t of stages.slice(1)){
+  if(Math.abs(t.net)<.0001)continue;
+  const existing=unique.find(v=>Math.abs(v.net-t.net)<.0001);
+  if(existing){existing.versions.push(t.i);existing.i=t.i;}
+  else unique.push({net:t.net,i:t.i,versions:[t.i]});
+ }
+ unique.sort((a,b)=>a.i-b.i);
+ for(const t of unique){const latest=Math.abs(t.net-last.net)<.001;
+  const curve=production?(q=>mpc(q)+t.net):(q=>mpb(q)-t.net);
+  g.curve(curve,(production?'MPC':'MPB')+t.versions.map(subNum).join('/'), 'gold',{at:xMax*.42+(t.i%3)*xMax*.08,dy:latest?-14:19,dash:!latest,opacity:latest?1:.7,size:12});
+ }
+ if(options().guides){
+  for(const t of stages){if(t.q<=0)continue;
+   const shownP=production?t.pb:t.ps;
+   const same=stages.filter(v=>Math.abs(v.q-t.q)<.01);if(same[0]!==t)continue;
+   const suffix=same.map(v=>subNum(v.i)).join('/'),col=same.includes(last)?'teal':t.i===0?'slate':'gold';g.line(t.q,0,t.q,shownP,'slate',{dash:true,width:1.1,opacity:.5});g.line(0,shownP,t.q,shownP,'slate',{dash:true,width:1.1,opacity:.5});g.dot(t.q,shownP,col,5);g.label(t.q,shownP,'E'+suffix,{dx:10,dy:-10,color:col,weight:750,size:13});g.label(t.q,0,'Q'+suffix,{dy:25,anchor:'middle',size:12});g.label(0,shownP,'P'+suffix,{dx:-12,dy:4,anchor:'end',size:12});
+  }
+  if(s.opt){
+   const popt=msc(qopt),close=stages.some(t=>Math.abs(t.q-qopt)<7&&Math.abs((production?t.pb:t.ps)-popt)<7);
+   if(!close)g.guide(qopt,popt,'E*','*','purple');
+   else{
+    g.line(qopt,0,qopt,popt,'slate',{dash:true,width:1.15,opacity:.65});g.line(0,popt,qopt,popt,'slate',{dash:true,width:1.15,opacity:.65});g.dot(qopt,popt,'purple',5);
+    g.label(qopt,popt,'E*',{dx:-24,dy:-26,color:'purple',weight:800,size:13});
+    const offsetX=g.X(qopt)-25,realX=g.X(qopt),realY=g.Y(popt),labelY=realY-18;
+    g.custom(offsetX,481,'Q*',{anchor:'middle',color:'purple',size:12});
+    g.raw(`<path d="M${offsetX.toFixed(1)} 465 L${realX.toFixed(1)} 457" stroke="${color('purple')}" stroke-width="1.1" fill="none"/>`);
+    g.custom(85,labelY,'P*',{anchor:'end',color:'purple',size:12});
+    g.raw(`<path d="M91 ${(labelY-3).toFixed(1)} L97 ${realY.toFixed(1)}" stroke="${color('purple')}" stroke-width="1.1" fill="none"/>`);
+   }
+  }
+ }
+ const welfare=.5*Math.pow(qopt-last.q,2);
+ const analysis=`${localText('Externalidad','Externality')} ${positive?localText('positiva','positive'):localText('negativa','negative')} ${localText('de','of')} ${production?localText('producción','production'):localText('consumo','consumption')}. ${localText('Cantidad privada inicial','Initial private quantity')} Q₀ = 70; ${localText('óptimo social','social optimum')} Q* = ${f(qopt)}; ${localText('cantidad tras políticas','quantity after policies')} Q${subNum(last.i)} = ${f(last.q)}. ${localText('Impuesto neto por unidad','Net tax per unit')} = ${f(last.net)}. ${localText('Pérdida de bienestar restante (modelo lineal)','Remaining welfare loss (linear model)')} ≈ ${f(welfare)}.`;
+ const formula=`Q* = ${f(qopt)}\n${localText('Cantidad final','Final quantity')} = ${f(last.q)}\n${localText('Cuña neta','Net wedge')} = ${f(last.net)}\n${localText('Pérdida de bienestar','Deadweight loss')} ≈ ${f(welfare)}\n`+stages.map(t=>`E${subNum(t.i)}: Q=${f(t.q)}, Pb=${f(t.pb)}, Ps=${f(t.ps)}`).join('\n');
+ return{svg:g.finish(),analysis,analysisEn:analysis,formula,formulaEn:formula,stages,stats:metrics([[localText('Cantidad actual','Current quantity'),f(last.q),'Q'+subNum(last.i)],[localText('Óptimo social','Social optimum'),f(qopt),'Q*'],[localText('Pérdida de bienestar','Deadweight loss'),f(welfare),localText('Modelo lineal','Linear model')]])};
+}
+function firm(s,title){const mc=q=>18+.5*q,ac=q=>q>0?18+500/q+.25*q:NaN,ar=q=>90-.6*q,mr=q=>90-1.2*q;const mon=s.kind==='monopoly',q=mon?(90-18)/1.7:(s.marketPrice-18)/.5,p=mon?ar(q):s.marketPrice,cost=ac(q),profit=(p-cost)*q;let g=plot(title,'Producción de la empresa (Q)','Costes, ingresos y precio',110,110);if(s.profit)g.rect(0,Math.min(p,cost),q,Math.max(p,cost),profit>=0?'teal':'red',.15);if(mon&&s.efficiency){let qEff=(90-18)/1.1;g.polygon([[q,mc(q)],[q,ar(q)],[qEff,ar(qEff)]],'gold',.3)}g.curve(mc,'MC','red',{at:91});g.curve(ac,'ATC','gold',{at:78});if(mon){g.curve(ar,'D = AR','blue',{at:87});g.curve(mr,'MR','purple',{at:58,dy:-13});g.dot(q,mc(q),'teal');g.line(0,p,q,p,'teal',{dash:true});if(options().guides){g.guide(q,p,'P*','*');g.line(0,cost,q,cost,'slate',{dash:true});g.label(0,cost,'ATC*',{dx:-11,dy:4,anchor:'end'});}if(s.efficiency){g.dot((90-18)/1.1,mc((90-18)/1.1),'purple');g.label((90-18)/1.1,mc((90-18)/1.1),'Q eficiente',{dx:6,dy:-9,color:'purple',size:12})}}
+else{g.line(0,p,110,p,'blue',{width:3});g.label(80,p,'P = D = AR = MR',{dy:-14,color:'blue',weight:750});g.dot(q,p,'teal');if(options().guides){g.guide(q,p,'E','e');g.line(0,cost,q,cost,'slate',{dash:true});g.label(0,cost,'ATC',{dx:-12,dy:4,anchor:'end'});}}
+let analysis=mon?`El monopolio iguala MR y MC en Q = ${f(q)}. Cobra P = ${f(p)} sobre la demanda y tiene ATC = ${f(cost)}. ${profit>=0?'Obtiene beneficio económico positivo.':'Registra una pérdida.'}`:`La empresa competitiva toma el precio P = ${f(p)} y produce donde P = MC: Q = ${f(q)}. El coste medio total es ${f(cost)} y ${profit>=0?'hay beneficio económico positivo.':'hay pérdida económica.'}`;if(s.efficiency&&!mon)analysis+=' En competencia perfecta, P = MC satisface la condición de eficiencia asignativa en este modelo simplificado.';return{svg:g.finish(),analysis,formula:`Q = ${f(q)}\nP = ${f(p)}\nATC = ${f(cost)}\nBeneficio = (P − ATC)Q = ${f(profit)}`,stats:metrics([['Producción óptima',f(q),'Q*'],['Precio',f(p),'P'],[profit>=0?'Beneficio':'Pérdida',f(Math.abs(profit)),'Económico/a']])};}
+function adas(s,title){
+ const baseAd=85,baseAs=20,lrBase=65,lr=lrBase+(s.lrOn?s.lr:0),keynesian=s.kind==='keynesian';
+ const keyFn=q=>q<=38?24:q<=78?24+.02*(q-38)**2:56+4.2*(q-78);
+ const dFn=intercept=>(q=>intercept-.6*q);
+ const aFn=offset=>(q=>keynesian?keyFn(q)+offset:baseAs+offset+.4*q);
+ function intersect(adI,asI){const d=dFn(adI),a=aFn(asI);if(d(0)<=a(0))return {q:NaN,p:NaN,valid:false};let lo=0,hi=112;while(hi<1e6&&d(hi)>a(hi))hi*=2;if(d(hi)>a(hi))return {q:NaN,p:NaN,valid:false};for(let i=0;i<65;i++){let q=(lo+hi)/2;if(d(q)>a(q))lo=q;else hi=q}const q=(lo+hi)/2,p=d(q);return {q,p,valid:p>=0};}
+ const steps=Array.isArray(s.steps)?s.steps:[];
+ const dVersions=[{index:0,intercept:baseAd}];
+ const aVersions=[{index:0,offset:0}];
+ let di=baseAd,ao=0,adN=0,asN=0;
+ const stages=[{...intersect(di,ao),adN:0,asN:0,action:localText('Inicial','Initial'),stepType:'initial'}];
+ for(const step of steps){
+  if(step.kind==='ad'){di+=step.delta;dVersions.push({index:++adN,intercept:di});}
+  else{ao+=step.delta;aVersions.push({index:++asN,offset:ao});}
+  stages.push({...intersect(di,ao),adN,asN,action:step.kind==='ad'?localText('Nueva DA','New AD'):localText('Nueva OA','New AS'),stepType:step.kind});
+ }
+ const last=stages.at(-1),validStages=stages.map((e,i)=>({...e,i})).filter(e=>e.valid),xMax=Math.max(112,...validStages.map(e=>e.q*1.20)),yMax=Math.max(112,...validStages.map(e=>e.p*1.28)),chart=plot(title,'PIB real (Y)','Nivel general de precios (P)',xMax,yMax);
+ const asLabel=keynesian?'OA':'OACP';
+ // Only the latest curve of each family is active. Retired curves remain visible as historical reference.
+ for(const [n,v] of dVersions.entries())chart.curve(dFn(v.intercept),'DA'+subNum(v.index),n===dVersions.length-1?'blue':'slate',{dash:n!==dVersions.length-1,at:Math.min(xMax*.82,Math.max(20,xMax*.75-(n%4)*xMax*.04)),dy:n===dVersions.length-1?-13:12,size:14});
+ for(const [n,v] of aVersions.entries())chart.curve(aFn(v.offset),asLabel+subNum(v.index),n===aVersions.length-1?'red':'slate',{dash:n!==aVersions.length-1,at:Math.min(xMax*.84,Math.max(20,xMax*.70-(n%4)*xMax*.04)),dy:n===aVersions.length-1?-14:15,size:14});
+ if(!keynesian){chart.line(lr,0,lr,yMax*.965,'purple',{width:3});chart.label(lr,yMax*.96,s.lrOn?'OALP₁':'OALP',{anchor:'middle',dy:-5,color:'purple',weight:750});if(s.lrOn){chart.line(lrBase,0,lrBase,yMax*.965,'slate',{dash:true,width:1.5});chart.label(lrBase,yMax*.94,'OALP₀',{anchor:'middle',dy:12,color:'slate',size:12});}}
+ // Axes labels are moved just enough to avoid colliding, while guide lines and dots stay exact.
+ const px=q=>100+q/xMax*727,py=p=>455-p/yMax*395;
+ function separatedLabels(stages,coord,low,high,spacing){
+  const sorted=stages.map((v,i)=>({i,ideal:coord(v)})).sort((a,b)=>a.ideal-b.ideal);
+  if(sorted.length*spacing>high-low)spacing=(high-low)/Math.max(sorted.length,1);
+  for(let k=0;k<sorted.length;k++){const item=sorted[k];item.val=Math.max(low,Math.min(high,item.ideal));if(k>0)item.val=Math.max(item.val,sorted[k-1].val+spacing);}
+  if(sorted.length&&sorted.at(-1).val>high){sorted.at(-1).val=high;for(let k=sorted.length-2;k>=0;k--)sorted[k].val=Math.min(sorted[k].val,sorted[k+1].val-spacing);}
+  return Object.fromEntries(sorted.map(v=>[stages[v.i]?.i??v.i,v.val]));
+ }
+ const pTags=separatedLabels(validStages,v=>py(v.p),66,448,17),qTags=separatedLabels(validStages,v=>px(v.q),105,823,27);
+ if(options().guides){
+  stages.forEach((e,i)=>{
+   if(!e.valid)return;
+   const col=i===stages.length-1?'teal':i===0?'slate':(i%2?'blue':'gold');
+   chart.line(0,e.p,e.q,e.p,'slate',{width:1.2,dash:true,opacity:.64});
+   chart.line(e.q,0,e.q,e.p,'slate',{width:1.2,dash:true,opacity:.64});
+   chart.dot(e.q,e.p,col,5.5);
+   const ytag=pTags[i],xtag=qTags[i],yexact=py(e.p),xexact=px(e.q);
+   if(Math.abs(ytag-yexact)>3)chart.raw(`<path d="M91 ${ytag.toFixed(1)} L96 ${yexact.toFixed(1)}" fill="none" stroke="${color('slate')}" stroke-width="1"/>`);
+   if(Math.abs(xtag-xexact)>3)chart.raw(`<path d="M${xtag.toFixed(1)} 462 L${xexact.toFixed(1)} 457" fill="none" stroke="${color('slate')}" stroke-width="1"/>`);
+   // Position using svg pixels; more stable than offsetting the economics coordinates.
+   chart.custom(87,ytag+4,'P'+subNum(i),{size:12,anchor:'end',color:'ink'});
+   chart.custom(xtag,478,'Y'+subNum(i),{size:12,anchor:'middle',color:'ink'});
+   chart.label(e.q,e.p,'E'+subNum(i),{dx:9,dy:-10-(i%2)*4,size:13,weight:800,color:col,halo:true});
+  });
+ }
+ if(!keynesian&&s.gap&&options().guides&&last.valid){const q=last.q;chart.line(q,11,lr,11,'gold',{width:3});if(Math.abs(q-lr)>5){chart.label((q+lr)/2,11,Math.abs(q-lr)<.8?'Sin brecha':q>lr?'Brecha inflacionaria':'Brecha recesiva',{anchor:'middle',dy:-10,color:'gold',size:12});}}
+ const eqList=stages.map((e,i)=>`E${subNum(i)}: P${subNum(i)} = ${f(e.p)}; Y${subNum(i)} = ${f(e.q)}`).join('\n');
+ const enList=stages.map((e,i)=>`E${subNum(i)}: P${subNum(i)} = ${f(e.p)}; Y${subNum(i)} = ${f(e.q)}`).join('\n');
+ const analysis=steps.length?`Los equilibrios aparecen exclusivamente en el orden de las intervenciones. ${steps.length} desplazamiento(s) producen ${stages.length} estados sucesivos; E${subNum(stages.length-1)} es el equilibrio final. No se marcan cruces entre curvas que nunca estuvieron activas simultáneamente.`:'Equilibrio base E₀: añade nuevas curvas DA u OACP en el orden que prefieras. Cada intervención creará un único equilibrio nuevo.';
+ const analysisEn=steps.length?`Equilibria appear only in the sequence of interventions. ${steps.length} shift(s) create ${stages.length} successive states; E${subNum(stages.length-1)} is the final equilibrium. Intersections between curves that were never active together are not marked.`:'Base equilibrium E₀: add AD or SRAS curves in any order. Each intervention creates exactly one new equilibrium.';
+ const formula=`${localText('Etapas sucesivas','Successive stages')}:\n${eqList}\n${localText('Producción potencial','Potential output')}: ${f(lr)}`;
+ return {svg:chart.finish(),analysis,analysisEn,formula,formulaEn:`Successive stages:\n${enList}\nPotential output: ${f(lr)}`,equilibria:stages,stats:metrics([[localText('PIB real final','Final real GDP'),f(last.q),'Y'+subNum(stages.length-1)],[localText('Nivel de precios final','Final price level'),f(last.p),'P'+subNum(stages.length-1)],[localText('Nuevas curvas','New curves'),String(steps.length),localText('Etapas añadidas','Added stages')]])};
+}
+function calcTradeStages(s){
+ const di=86,si=14,bd=.6,bs=.5,aut=(di*bs+si*bd)/(bd+bs);
+ const qd=p=>Math.max(0,(di-p)/bd),qs=p=>Math.max(0,(p-si)/bs),imports=p=>Math.max(0,qd(p)-qs(p));
+ let tariff=0,quota=Infinity;const stages=[];
+ function snapshot(step=null){
+  const tariffPrice=Math.min(aut,s.pw+tariff);
+  const quotaPrice=Number.isFinite(quota)?(di/bd+si/bs-quota)/(1/bd+1/bs):s.pw;
+  const price=Math.max(s.pw,Math.min(aut,Math.max(tariffPrice,quotaPrice)));
+  const qS=qs(price),qD=qd(price),m=imports(price),quotaBinds=Number.isFinite(quota)&&quotaPrice>tariffPrice+.00001&&m>.00001;
+  const tariffRevenue=tariff*m,quotaRent=Math.max(0,price-s.pw-tariff)*m;
+  return{i:stages.length,kind:step?.kind||'base',value:step?.value||0,tariff,quota,tariffPrice,quotaBinds,price,qS,qD,imports:m,tariffRevenue,quotaRent,aut};
+ }
+ stages.push(snapshot());
+ for(const step of (s.steps||[])){if(step.kind==='tariff')tariff+=step.value;else if(step.kind==='quota')quota=Math.min(quota,step.value);stages.push(snapshot(step));}
+ return stages;
+}
+function trade(s,title){
+ const stages=calcTradeStages(s),last=stages.at(-1),initial=stages[0],xMax=122;
+ const di=86,si=14,bd=.6,bs=.5,D=q=>di-bd*q,S=q=>si+bs*q,g=plot(title,'Cantidad (Q)','Precio (P)',xMax,110);
+ if(s.dwl&&last.price>s.pw){const qs0=initial.qS,qd0=initial.qD;g.polygon([[qs0,s.pw],[last.qS,s.pw],[last.qS,last.price]],'gold',.22);g.polygon([[last.qD,last.price],[qd0,s.pw],[last.qD,s.pw]],'gold',.22);}
+ g.curve(D,'D doméstica','blue',{at:86,dy:22});g.curve(S,'S doméstica','red',{at:90,dy:-14});
+ // Each step is a policy state, not a fictional intersection between domestic S and D.
+ const levels=[];for(const t of stages){if(!levels.some(v=>Math.abs(v.price-t.price)<.0001))levels.push(t);}
+ for(const t of levels){const isLast=Math.abs(t.price-last.price)<.0001;
+  g.line(0,t.price,xMax,t.price,t.i===0?'teal':isLast?'purple':'slate',{dash:t.i!==0&&!isLast,width:isLast?2.8:t.i===0?2.4:1.5,opacity:isLast?1:.72});
+ }
+ // Space right-hand labels for close prices, keeping leader marks at true levels.
+ const pt=levels.map(t=>({i:t.i,real:g.Y(t.price)})).sort((a,b)=>a.real-b.real);
+ for(let i=0;i<pt.length;i++){pt[i].shown=Math.min(445,Math.max(76,pt[i].real));if(i>0)pt[i].shown=Math.max(pt[i].shown,pt[i-1].shown+16);}
+ if(pt.length&&pt.at(-1).shown>444){pt.at(-1).shown=444;for(let i=pt.length-2;i>=0;i--)pt[i].shown=Math.min(pt[i].shown,pt[i+1].shown-16);}
+ for(const {i,real,shown} of pt){const label=i===0?localText('Pm · P₀','Pw · P₀'):'P'+subNum(i);if(Math.abs(shown-real)>4)g.raw(`<path d="M827 ${real.toFixed(1)} L836 ${shown.toFixed(1)}" fill="none" stroke="${color('slate')}" stroke-width="1"/>`);g.custom(838,shown+4,label,{size:12,color:i===last.i?'purple':i===0?'teal':'slate',weight:i===last.i?800:600});}
+ if(s.areas&&options().guides){
+  const i=subNum(last.i);
+  for(const [q,tag,col] of [[last.qS,'Qs','red'],[last.qD,'Qd','blue']]){g.line(q,0,q,last.price,'slate',{dash:true,width:1.2});g.dot(q,last.price,col,5);g.label(q,0,tag+i,{anchor:'middle',dy:25,size:12});}
+  if(last.imports>1){g.line(last.qS,last.price,last.qD,last.price,'gold',{width:4});g.label((last.qS+last.qD)/2,last.price,last.imports<18?'M':'Importaciones',{anchor:'middle',dy:-15,color:'gold',size:12,weight:800});}
+ }
+ const analysis=`${localText('Se aplicaron','Applied')} ${stages.length-1} ${localText('intervenciones comerciales sucesivas','successive trade interventions')}. ${localText('Arancel acumulado','Cumulative tariff')}: ${f(last.tariff)}; ${localText('cuota efectiva','effective quota')}: ${Number.isFinite(last.quota)?f(last.quota):localText('sin límite','unrestricted')}. ${localText('Precio interno','Domestic price')}: ${f(last.price)}; ${localText('importaciones','imports')}: ${f(last.imports)}. ${localText('Recaudación por aranceles','Tariff revenue')}: ${f(last.tariffRevenue)}; ${localText('renta potencial de cuotas','potential quota rent')}: ${f(last.quotaRent)}. ${localText('La renta de cuota no se atribuye automáticamente al gobierno.','Quota rent does not automatically accrue to the government.')}`;
+ const lines=stages.map(t=>`#${t.i}: P=${f(t.price)}; Qs=${f(t.qS)}; Qd=${f(t.qD)}; M=${f(t.imports)}`).join('\n');
+ const formula=`${localText('Precio mundial','World price')} = ${f(s.pw)}\n${localText('Arancel total','Total tariff')} = ${f(last.tariff)}\n${localText('Cuota efectiva','Effective quota')} = ${Number.isFinite(last.quota)?f(last.quota):'∞'}\n${localText('Recaudación','Revenue')} = ${f(last.tariffRevenue)}\n${localText('Renta de cuota','Quota rent')} = ${f(last.quotaRent)}\n${lines}`;
+ return{svg:g.finish(),analysis,analysisEn:analysis,formula,formulaEn:formula,stages,stats:metrics([[localText('Precio interno','Domestic price'),f(last.price),'P'+subNum(last.i)],[localText('Importaciones','Imports'),f(last.imports),'M'],[localText('Aranceles / renta de cuota','Tariffs / quota rent'),f(last.tariffRevenue)+' / '+f(last.quotaRent),localText('Valores fiscales','Fiscal values')]])};
+}
+function forex(s,title){const dd=82+(s.dOn?s.d:0),ss=16+(s.sOn?s.s:0),D=q=>dd-.5*q,S=q=>ss+.5*q,initialQ=66,initialP=49,q=dd-ss,p=(dd+ss)/2,g=plot(title,'Cantidad de divisas','Moneda nacional / divisa',134,105);if(s.dOn)g.curve(q=>82-.5*q,'D₀','slate',{dash:true,at:93});if(s.sOn)g.curve(q=>16+.5*q,'S₀','slate',{dash:true,at:90});g.curve(D,s.dOn?'D₁':'D','blue',{at:92});g.curve(S,s.sOn?'S₁':'S','red',{at:88});if(options().guides){if(s.dOn||s.sOn)g.guide(initialQ,initialP,'E₀','0','slate');g.guide(q,p,s.dOn||s.sOn?'E₁':'E',s.dOn||s.sOn?'1':'e','teal')}
+let analysis=`El tipo de cambio de equilibrio es ${f(p)} unidades de moneda nacional por divisa extranjera. ${p>initialP?'La moneda nacional se deprecia frente al escenario inicial.':p<initialP?'La moneda nacional se aprecia frente al escenario inicial.':'No hay variación frente al punto inicial.'}`;let gap=0;if(s.peg){let fixed=s.pegPrice,qd=(dd-fixed)/.5,qs=(fixed-ss)/.5;gap=qd-qs;g.line(0,fixed,134,fixed,'gold',{width:3,dash:true});g.label(110,fixed,'TC fijo',{dy:-12,color:'gold',weight:750});if(Math.abs(gap)>.01){g.line(Math.min(qd,qs),fixed,Math.max(qd,qs),fixed,'purple',{width:3.3});for(let [val,l] of [[qd,'Qd'],[qs,'Qs']]){g.line(val,0,val,fixed,'slate',{dash:true,width:1});g.dot(val,fixed,l==='Qd'?'blue':'red');g.label(val,0,l,{dy:25,anchor:'middle'});}analysis+=` Con TC fijo ${f(fixed)} existe ${gap>0?'exceso de demanda':'exceso de oferta'} de divisas de ${f(Math.abs(gap))}. Mantenerlo requiere intervención u otras medidas.`;}else analysis+=' El tipo fijo coincide con el de equilibrio.';}return{svg:g.finish(),analysis,formula:`Demanda: TC = ${f(dd)} − 0,5Q\nOferta: TC = ${f(ss)} + 0,5Q\nQ equilibrio = ${f(q)}\nTC equilibrio = ${f(p)}${s.peg?`\nDesequilibrio a TC fijo = ${f(Math.abs(gap))}`:''}`,stats:metrics([['Tipo de cambio',f(p),'Equilibrio'],['Cantidad de divisas',f(q),'Q'],[s.peg?'Desajuste con tipo fijo':'Cambio de TC',f(s.peg?Math.abs(gap):p-initialP),s.peg?'Qd vs Qs':'Frente al inicial']])};}
+function ppf(s,title){const change=s.growthOn?s.growth:0,cap=100*(1+change/100),fun=(max,q)=>q>max?NaN:max*Math.sqrt(Math.max(0,1-(q/max)**2)),g=plot(title,'Bien X','Bien Y',135,135);if(s.growthOn)g.curve(q=>fun(100,q),'FPP₀','slate',{dash:true,at:64,dy:15});g.curve(q=>fun(cap,q),s.growthOn?'FPP₁':'FPP','blue',{at:cap*.63,dy:-11});if(s.points){let ax=cap*.46,ay=fun(cap,ax),bx=cap*.33,by=cap*.3;g.dot(ax,ay,'teal');g.label(ax,ay,'A · eficiente',{dx:12,dy:-12,color:'teal',weight:750,size:13});g.dot(bx,by,'gold');g.label(bx,by,'B · ineficiente',{dx:12,dy:18,color:'gold',size:13});let cx=cap*.76,cy=fun(cap,cx)+20;g.dot(cx,cy,'red');g.label(cx,cy,'C · inalcanzable',{dx:-9,dy:-13,anchor:'end',color:'red',size:13})}if(s.cost){const x=cap*.59,y=fun(cap,x),x2=cap*.76,y2=fun(cap,x2);g.line(x,y,x2,y,'purple',{dash:true});g.line(x2,y,x2,y2,'purple',{dash:true});g.label(x2,(y+y2)/2,'−ΔY',{dx:13,color:'purple',size:13});g.label((x+x2)/2,y,'+ΔX',{dy:-12,anchor:'middle',color:'purple',size:13})}const analysis=`La FPP describe combinaciones máximas de dos bienes con recursos y tecnología dados. ${change>0?'El desplazamiento hacia fuera representa crecimiento de capacidad.':change<0?'El desplazamiento hacia dentro representa reducción de capacidad.':'No se ha introducido ningún cambio de capacidad.'} ${s.cost?'El segmento marcado ilustra el coste de oportunidad creciente al producir más X.':''}`;return{svg:g.finish(),analysis,formula:`FPP: Y = K · √(1 − (X/K)²)\nK inicial = 100\nK actual = ${f(cap)}`,stats:metrics([['Capacidad de X',f(cap),'Máximo posible'],['Capacidad de Y',f(cap),'Máximo posible'],['Cambio de capacidad',f(change)+'%','Escenario']])};}
+function lorenz(s,title){const gi=s.gini,alpha=(1+gi)/(1-gi),L=q=>100*(q/100)**alpha,g=plot(title,'Población acumulada (%)','Ingreso acumulado (%)',100,100);if(s.shade){let pts=[];for(let q=0;q<=100;q+=2)pts.push([q,q]);for(let q=100;q>=0;q-=2)pts.push([q,L(q)]);g.polygon(pts,'blue',.14)}g.line(0,0,100,100,'slate',{dash:true,width:2.4});g.label(38,38,'Igualdad perfecta',{dx:5,dy:-12,color:'slate',size:12});g.curve(L,'Curva de Lorenz','blue',{at:76,dy:18});if(s.median){g.line(50,0,50,L(50),'slate',{dash:true,width:1.4});g.line(0,L(50),50,L(50),'slate',{dash:true,width:1.4});g.dot(50,L(50),'teal');g.label(50,L(50),f(L(50))+'% del ingreso',{dx:10,dy:18,color:'teal',weight:750,size:13})}return{svg:g.finish(),analysis:`La curva representa una distribución ilustrativa con coeficiente de Gini ${gi.toFixed(2)}. El 50% más pobre de la población recibe ${f(L(50))}% del ingreso total. A mayor separación de la diagonal, mayor desigualdad.`,formula:`L(x) = x^${alpha.toFixed(3)} (x de 0 a 1)\nGini = (α − 1) / (α + 1)\nGini calculado = ${gi.toFixed(2)}`,stats:metrics([['Coeficiente de Gini',gi.toFixed(2),'0 = igualdad perfecta'],['Ingreso del 50% inferior',f(L(50))+'%','Acumulado'],['Área entre curvas',f(gi*50),'Puntos del cuadrado 100×100']])};}
+function cycle(s,title){const trend=q=>31+.42*q,cy=q=>trend(q)+s.amplitude*Math.sin((q-8)*Math.PI/24),g=plot(title,'Tiempo','PIB real (índice)',100,110);if(s.trend)g.curve(trend,'PIB potencial','slate',{dash:true,at:84,dy:-10});g.curve(cy,'PIB real','blue',{at:86,dy:17});if(s.phases){for(let [x,label,key] of [[20,'Cima','teal'],[44,'Valle','red'],[68,'Cima','teal'],[92,'Valle','red']]){let y=cy(x);g.dot(x,y,key);g.label(x,y,label,{dy:x===20||x===68?-13:19,anchor:'middle',color:key,weight:750,size:12})}g.label(32,84,'Contracción',{anchor:'middle',color:'red',size:12});g.label(57,83,'Expansión',{anchor:'middle',color:'teal',size:12})}return{svg:g.finish(),analysis:`El PIB real fluctúa alrededor de una tendencia de largo plazo. Se representa una amplitud cíclica de ${f(s.amplitude)} puntos del índice. Los picos, valles y las fases son ilustrativos, no datos históricos.`,formula:`PIB potencial: Y = 31 + 0,42t\nPIB real = tendencia + ${f(s.amplitude)}·sen[(t−8)π/24]`,stats:metrics([['Amplitud',f(s.amplitude),'Índice'],['Horizonte',100,'Periodos abstractos'],['Tendencia final',f(trend(100)),'Índice']])};}
+function phillips(s,title){const shock=s.shockOn?s.shock:0,natural=7,phi=u=>11-.46*u+shock,g=plot(title,'Desempleo (%)','Inflación (%)',20,16);if(s.shockOn)g.curve(u=>11-.46*u,'CPC₀','slate',{dash:true,at:15,dy:-9});g.curve(phi,s.shockOn?'CPC₁':'CPC','blue',{at:15,dy:-10});if(s.natural){g.line(natural,0,natural,16,'purple',{width:2.9});g.label(natural,15,'CPLP',{dx:10,dy:3,color:'purple',weight:750});g.dot(natural,phi(natural),'teal');g.label(natural,0,'uₙ',{dy:26,anchor:'middle',color:'purple'})}return{svg:g.finish(),analysis:`La curva de Phillips de corto plazo representa una relación inversa hipotética entre inflación y desempleo. ${shock===0?'No hay choque de expectativas.':`El choque de ${f(shock)} puntos desplaza la curva de corto plazo ${shock>0?'hacia arriba':'hacia abajo'}.`} La recta de largo plazo indica una tasa natural ilustrativa del 7%.`,formula:`π = ${f(11+shock)} − 0,46u\nTasa natural de desempleo = 7%`,stats:metrics([['Tasa natural',7+'%','uₙ'],['Inflación a uₙ',f(phi(natural))+'%','Corto plazo'],['Choque',f(shock),'Puntos porcentuales']])};}
+function circular(s,title){let C=color;let arr=[];const T=(x,y,z,size=14,col='ink',weight=700)=>`<text x="${x}" y="${y}" font-family="Arial,Helvetica,sans-serif" font-size="${size}" fill="${C(col)}" text-anchor="middle" font-weight="${weight}">${escapeHtml(graphTerm(z))}</text>`;const box=(x,y,w,h,lab,sub)=>{arr.push(`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="12" fill="#f5f8fe" stroke="${C('slate')}" stroke-width="1.5"/>`);arr.push(T(x+w/2,y+27,lab,16));arr.push(T(x+w/2,y+46,sub,11,'slate',500))};const arrow=(d,col)=>arr.push(`<path d="${d}" stroke="${C(col)}" stroke-width="2.9" fill="none" marker-end="url(#nodeArrow)"/>`);box(72,108,230,78,'HOGARES','Factores productivos / consumo');box(590,108,230,78,'EMPRESAS','Producción / contratación');arrow('M302 124 H585','blue');arr.push(T(446,110,'Trabajo y otros factores',12,'blue',500));arrow('M590 168 H308','red');arr.push(T(449,201,'Salarios, rentas e ingresos',12,'red',500));arrow('M302 240 H585','blue');arr.push(T(447,231,'Gasto de consumo',12,'blue',500));arrow('M590 284 H308','red');arr.push(T(449,299,'Bienes y servicios',12,'red',500));let additions=[];if(s.gov){box(40,360,245,69,'GOBIERNO','Impuestos / gasto público');arrow('M170 186 V355','teal');additions.push('impuestos y gasto público')}if(s.finance){box(323,360,245,69,'SECTOR FINANCIERO','Ahorro / inversión');arrow('M447 356 V303','purple');additions.push('ahorro e inversión')}if(s.foreign){box(605,360,245,69,'SECTOR EXTERIOR','Importaciones / exportaciones');arrow('M714 355 V192','gold');additions.push('comercio exterior')}arr.push(T(447,493,'Flujos monetarios y reales · esquema simplificado',12,'slate',500));let svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 525" role="img" aria-label="${escapeHtml(title)}"><defs><marker id="nodeArrow" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6" fill="${C('ink')}"/></marker></defs><rect width="900" height="525" fill="white"/>${T(100,34,title,17,'ink',800)}${arr.join('')}</svg>`;return{svg,analysis:`Los hogares suministran factores a las empresas y reciben rentas; las empresas venden bienes y servicios a hogares. ${additions.length?'Se añaden: '+additions.join(', ')+'.':'Activa sectores adicionales para visualizar más agentes.'} Las flechas muestran relaciones simplificadas, no todos los flujos contables.`,formula:'Filtraciones = Ahorro + Impuestos + Importaciones\nInyecciones = Inversión + Gasto público + Exportaciones',stats:metrics([['Agentes mostrados',String(2+Number(s.gov)+Number(s.finance)+Number(s.foreign)),'Hogares + empresas + otros'],['Filtraciones','S + T + M','Modelo abierto'],['Inyecciones','I + G + X','Modelo abierto']])};}
+
+function placeCurveLabels(svg){
+ if(!svg)return;
+ const names=[...svg.querySelectorAll('text[data-label-kind="curve"]')];
+ const paths=[...svg.querySelectorAll('path[clip-path]')].filter(el=>el.getAttribute('stroke')!=='none'&&+el.getAttribute('stroke-width')>=2.1);
+ const curveDots=[];
+ for(const path of paths){
+  try{const len=path.getTotalLength();for(let l=0;l<=len;l+=6){const p=path.getPointAtLength(l);curveDots.push([p.x,p.y])}}catch(e){}
+ }
+ const allText=[...svg.querySelectorAll('text')];
+ const boxOf=el=>{try{return el.getBBox()}catch(e){return {x:0,y:0,width:0,height:0}}};
+ const overlap=(a,b,pad=2)=>Math.max(0,Math.min(a.x+a.width,b.x+b.width+pad)-Math.max(a.x,b.x-pad))*Math.max(0,Math.min(a.y+a.height,b.y+b.height+pad)-Math.max(a.y,b.y-pad));
+ const reserved=allText.filter(el=>!names.includes(el)).map(boxOf);
+ const candidates=[[0,0],[0,-13],[0,-28],[0,19],[0,34],[-22,-17],[22,-17],[-22,22],[22,22],[-55,-18],[-55,24],[50,-18],[50,24],[0,-47],[0,52],[-90,-32],[-90,31]];
+ for(const label of names){
+  const homeX=+label.dataset.homeX,homeY=+label.dataset.homeY;
+  let best=null;
+  for(const [dx,dy] of candidates){
+   label.setAttribute('x',homeX+dx);label.setAttribute('y',homeY+dy);
+   const b=boxOf(label);
+   // Reserved titles/axis labels have priority, and label should stay in diagram area.
+   let cost=(Math.abs(dx)*.09+Math.abs(dy)*.24);
+   if(b.x<109||b.x+b.width>875||b.y<57||b.y+b.height>451)cost+=5000;
+   for(const r of reserved)cost+=overlap(b,r,6)*.32;
+   for(const [x,y] of curveDots){if(x>=b.x-6&&x<=b.x+b.width+6&&y>=b.y-5&&y<=b.y+b.height+5)cost+=16;}
+   if(!best||cost<best.cost)best={x:homeX+dx,y:homeY+dy,b:({...b}),cost};
+  }
+  label.setAttribute('x',best.x);label.setAttribute('y',best.y);
+  reserved.push(boxOf(label));
+ }
+}
+function englishAnalysis(id,s,r){
+ const val=i=>r.stats[i]?.[1]??'—';
+ const ef=f;
+ switch(id){
+  case 'market':{
+   const di=82+(s.dOn?s.dShift:0),si=16+(s.sOn?s.sShift:0),bd=s.bd,bs=s.bs,q=(di-si)/(bd+bs),p=di-bd*q;
+   if(s.policy==='tax'||s.policy==='subsidy'){
+    const k=s.policy==='tax'?s.tax:-s.subsidy,qn=(di-si-k)/(bd+bs),pb=di-bd*qn,ps=si+bs*qn;
+    return `${s.policy==='tax'?'An indirect tax':'A per-unit subsidy'} of ${ef(Math.abs(k))} creates a wedge between the price buyers pay (${ef(pb)}) and the price sellers receive (${ef(ps)}). Quantity moves from ${ef(q)} to ${ef(qn)}. ${s.policy==='tax'?'Tax revenue':'Government subsidy expenditure'} is ${ef(Math.abs(k)*qn)}. The curves also incorporate any active shifts.`;
+   }
+   if(s.policy==='ceiling'||s.policy==='floor'){
+    const pc=s.policy==='ceiling'?s.ceiling:s.floor,binding=s.policy==='ceiling'?pc<p:pc>p,qd=Math.max(0,(di-pc)/bd),qs=Math.max(0,(pc-si)/bs);
+    return `The ${s.policy==='ceiling'?'price ceiling':'price floor'} of ${ef(pc)} is ${binding?'binding':'non-binding'} relative to the competitive price ${ef(p)}. ${binding?`At this price, Qd = ${ef(qd)} and Qs = ${ef(qs)}; the ${s.policy==='ceiling'?'shortage':'surplus'} is ${ef(Math.abs(qd-qs))}.`:'The competitive equilibrium is unchanged.'}`;
+   }
+   return `The initial equilibrium is P = ${ef((82*bs+16*bd)/(bd+bs))} and Q = ${ef((82-16)/(bd+bs))}. With the selected shifts, the new equilibrium is P = ${ef(p)} and Q = ${ef(q)}. Add a shift or policy to compare outcomes.`;
+  }
+  case 'externality':{
+   const positive=s.kind.startsWith('pos'),prod=s.kind.endsWith('prod');
+   return `This is a ${positive?'positive':'negative'} ${prod?'production':'consumption'} externality. Private-market quantity is ${val(0)} and the socially optimal quantity is ${val(1)}. The gap is ${val(2)} units. ${s.correction?'A corrective '+(positive?'subsidy':'tax')+' is shown.':'Enable the corrective policy layer to explore intervention.'}`;
+  }
+  case 'firm':return `Under ${s.kind==='monopoly'?'monopoly':'perfect competition'}, the firm produces Q = ${val(0)} at price P = ${val(1)}. Its ${r.stats[2][0]==='Beneficio'?'economic profit':'economic loss'} is ${val(2)}. ${s.kind==='monopoly'?'Monopoly chooses MR = MC and reads P from demand.':'A competitive firm takes the market price as given and chooses P = MC.'}`;
+  case 'adas':return `The ${s.kind==='classical'?'AD–SRAS–LRAS':'Keynesian AD–AS'} diagram has illustrative equilibrium output Y = ${val(0)} and price level P = ${val(1)}. ${s.kind==='classical'?'The reported output gap is '+val(2)+' (Y − potential output).':'The effect of an AD shift depends on the region of the aggregate supply curve.'}`;
+  case 'trade':{
+   const pw=s.pw,di=86,si=14,bd=.6,bs=.5,aut=(di*bs+si*bd)/(bd+bs);
+   const imp=price=>(di-price)/bd-(price-si)/bs,free=imp(pw);
+   let p=pw;
+   if(s.policy==='tariff')p=Math.min(pw+s.tariff,aut);
+   if(s.policy==='quota'&&free>s.quota)p=(di/bd+si/bs-s.quota)/(1/bd+1/bs);
+   const imports=Math.max(0,imp(p));
+   return `For an importing country, the world price is ${ef(pw)} and free-trade imports are ${ef(free)}. ${s.policy==='tariff'?'With a tariff':s.policy==='quota'?'With an import quota':'Under free trade'}, the domestic price is ${ef(p)} and imports are ${ef(imports)}. ${s.policy==='tariff'?'Tariff revenue is '+ef((p-pw)*imports)+'.':s.policy==='quota'?'Potential quota rent is '+ef((p-pw)*imports)+'; it does not automatically go to the government.':'Add a tariff or quota to compare outcomes.'}`;
+  }
+  case 'fx':return `The equilibrium exchange rate is ${val(0)} domestic-currency units per unit of foreign currency, for a quantity of ${val(1)}. ${s.peg?'A fixed exchange rate is imposed; the calculated foreign-currency market imbalance is '+val(2)+'.':'Change in the exchange rate relative to the initial equilibrium: '+val(2)+'.'}`;
+  case 'ppf':return `The PPF shows maximum feasible production combinations. Maximum production of either good is ${val(0)} or ${val(1)}. ${s.growthOn?'The chosen capacity change is '+val(2)+'.':'There is no capacity shift.'} An efficient point lies on the frontier; an inefficient point lies inside it.`;
+  case 'lorenz':return `This illustrative Lorenz curve has a Gini coefficient of ${val(0)}. The bottom half of the population receives ${val(1)} of cumulative income. A greater distance from the perfect equality line indicates more inequality.`;
+  case 'cycle':return `Real GDP fluctuates around an illustrative long-run trend. Cycle amplitude is ${val(0)} index points across ${val(1)} abstract periods. Peaks, troughs and phases are schematic, not historical observations.`;
+  case 'phillips':return `The short-run Phillips curve illustrates an inverse relationship between inflation and unemployment. The natural rate of unemployment is ${val(0)}, and illustrative inflation at that rate is ${val(1)}. ${s.shockOn?'An expectations shock shifts the short-run curve.':'No expectations shock is active.'}`;
+  case 'circular':return `Households supply factors of production and receive income; firms sell goods and services. The diagram shows ${val(0)} agents, including any selected government, financial and foreign sectors. Leakages are S + T + M; injections are I + G + X. Arrows simplify real and monetary flows.`;
+  default:return r.analysis;
+ }
+}
+
+const RENDER={market,externality,firm,adas,trade,fx:forex,ppf,lorenz,cycle,phillips,circular};
+function activeChips(){const s=st();let list=[];switch(current){case'market':if(s.dOn)list.push(['dOn','Demanda desplazada']);if(s.sOn)list.push(['sOn','Oferta desplazada']);if(s.steps?.length)list.push(['steps',s.steps.length+' '+localText('intervenciones','interventions')]);if(s.welfare)list.push(['welfare','Excedentes']);if(s.dwl)list.push(['dwl','Pérdida de bienestar']);break;case'trade':if(s.steps?.length)list.push(['steps',s.steps.length+' '+localText('intervenciones','interventions')]);for(let k of ['areas','dwl'])if(s[k])list.push([k,k==='areas'?'Cantidades':'Áreas']);break;case'externality':if(s.steps?.length)list.push(['steps',s.steps.length+' '+localText('correcciones','corrections')]);if(s.opt)list.push(['opt',localText('Óptimo social','Social optimum')]);if(s.dwl)list.push(['dwl',localText('Pérdida de bienestar','Deadweight loss')]);break;case'adas':if(s.steps.length)list.push(['steps',s.steps.length+' '+localText('desplazamientos','shifts')]);if(s.lrOn&&s.kind==='classical')list.push(['lrOn','Choque OALP']);break;case'lorenz':if(s.shade)list.push(['shade','Área Gini']);if(s.median)list.push(['median','Mitad de población']);break;default:for(const [key,val] of Object.entries(s)){if(typeof val==='boolean'&&val)list.push([key,({opt:'Óptimo social',correction:'Política correctiva',dwl:'Pérdida de bienestar',profit:'Beneficio',efficiency:'Eficiencia',growthOn:'Desplazamiento FPP',shockOn:'Expectativas',natural:'CPLP',peg:'Tipo fijo',gov:'Gobierno',foreign:'Exterior',finance:'Finanzas',points:'Puntos',cost:'Coste',trend:'Tendencia',phases:'Fases',dOn:'Demanda',sOn:'Oferta'}[key]||key)])}}return list}
+function drawStages(result){
+ const panel=$('stagePanel');
+ if(current==='adas'&&result.equilibria){
+  panel.hidden=false;
+  let rows=result.equilibria.map((v,i)=>{const dName=(language==='en'?'AD':'DA')+subNum(v.adN),sName=(st().kind==='classical'?(language==='en'?'SRAS':'OACP'):(language==='en'?'AS':'OA'))+subNum(v.asN);
+   return `<tr><td><strong>E${subNum(i)}</strong></td><td>${escapeHtml(v.action)}</td><td>${escapeHtml(dName)} / ${escapeHtml(sName)}</td><td>${v.valid?'P'+subNum(i)+' = '+f(v.p):localText('Sin equilibrio positivo','No positive equilibrium')}</td><td>${v.valid?'Y'+subNum(i)+' = '+f(v.q):'—'}</td></tr>`;}).join('');
+  panel.innerHTML=`<h3>${localText('Equilibrios reales por orden de incorporación','Actual equilibria in insertion order')}</h3><div class="stage-table-scroll"><table><thead><tr><th>${localText('Etapa','Stage')}</th><th>${localText('Intervención','Change')}</th><th>${localText('Curvas vigentes','Active curves')}</th><th>${localText('Nivel de precios','Price level')}</th><th>${localText('PIB real','Real GDP')}</th></tr></thead><tbody>${rows}</tbody></table></div><p class="stage-caption">${localText('Se calculan únicamente los cruces sucesivos. Las curvas discontinuas se conservan como referencia histórica.','Only successive intersections are calculated. Dashed curves show earlier states.')}</p>`;
+  return;
+ }
+ if(!['market','trade','externality'].includes(current)||!result.stages){panel.hidden=true;panel.innerHTML='';return;}
+ panel.hidden=false;
+ const stages=result.stages;
+ if(current==='externality'){
+  const rows=stages.map(t=>`<tr><td><strong>E${subNum(t.i)}</strong></td><td>${t.kind==='base'?localText('Mercado base','Base market'):escapeHtml(policyTitle(t.kind))+' ('+f(t.value)+')'}</td><td>${f(t.net)}</td><td>${f(t.pb)}</td><td>${f(t.ps)}</td><td>${f(t.q)}</td></tr>`).join('');
+  panel.innerHTML=`<h3>${localText('Correcciones sucesivas de la externalidad','Successive externality corrections')}</h3><div class="stage-table-scroll"><table><thead><tr><th>${localText('Etapa','Stage')}</th><th>${localText('Política','Policy')}</th><th>${localText('Cuña neta','Net wedge')}</th><th>Pb</th><th>Ps</th><th>Q</th></tr></thead><tbody>${rows}</tbody></table></div><p class="stage-caption">${localText('La cantidad social óptima se calcula con los costes y beneficios sociales. Las políticas acumuladas pueden acercar o alejar al mercado del óptimo.','Social optimum uses social costs and benefits. Stacked policies can move the market closer to or further from the optimum.')}</p>`;
+  return;
+ }
+ if(current==='market'){
+  const rows=stages.map(t=>`<tr><td><strong>${t.conflict||!t.validQ?'—':t.binding?'C'+subNum(t.i):'E'+subNum(t.i)}</strong></td><td>${t.kind==='base'?localText('Mercado base','Base market'):escapeHtml(policyTitle(t.kind))+' ('+f(t.value)+')'}</td><td>${t.conflict?localText('Controles incompatibles','Incompatible controls'):!t.validQ?localText('Sin comercio','No trade'):t.binding?(t.binding==='ceiling'?localText('Máximo vinculante','Binding ceiling'):localText('Mínimo vinculante','Binding floor')):localText('Equilibrio','Equilibrium')}</td><td>${t.price===null?'—':f(t.price)}</td><td>${t.price===null?'—':f(t.price-t.net)}</td><td>${f(t.traded)}</td></tr>`).join('');
+  panel.innerHTML=`<h3>${localText('Etapas e incidencias de impuestos y subvenciones','Stages and tax/subsidy incidence')}</h3><div class="stage-table-scroll"><table><thead><tr><th>${localText('Etapa','Stage')}</th><th>${localText('Política añadida','Added policy')}</th><th>${localText('Situación','Status')}</th><th>Pb</th><th>Ps</th><th>Q</th></tr></thead><tbody>${rows}</tbody></table></div><p class="stage-caption">${localText('E indica equilibrio de mercado. C indica un precio controlado: no se trata de un cruce de oferta y demanda. Las cantidades demandada y ofrecida del control se representan en el gráfico.','E denotes market equilibrium. C denotes a controlled price, not a supply–demand intersection. Quantities demanded and supplied under the control are shown in the diagram.')}</p>`;
+ }else{
+  const rows=stages.map(t=>`<tr><td><strong>${subNum(t.i)}</strong></td><td>${t.kind==='base'?localText('Libre comercio','Free trade'):escapeHtml(policyTitle(t.kind))+' ('+f(t.value)+')'}</td><td>P${subNum(t.i)} = ${f(t.price)}</td><td>${f(t.qS)}</td><td>${f(t.qD)}</td><td>${f(t.imports)}</td><td>${f(t.tariffRevenue)}</td><td>${f(t.quotaRent)}</td></tr>`).join('');
+  panel.innerHTML=`<h3>${localText('Precios y cantidades tras cada política comercial','Prices and quantities after each trade policy')}</h3><div class="stage-table-scroll"><table><thead><tr><th>${localText('Etapa','Stage')}</th><th>${localText('Política','Policy')}</th><th>P</th><th>Qs</th><th>Qd</th><th>M</th><th>${localText('Aranceles','Tariff rev.')}</th><th>${localText('Renta cuota','Quota rent')}</th></tr></thead><tbody>${rows}</tbody></table></div><p class="stage-caption">${localText('Los precios se dibujan en el nivel exacto. Las etiquetas repetidas se resumen en la tabla para evitar cruces y superposiciones.','Price lines are plotted at exact levels. Duplicate labels are consolidated into the table to avoid overlapping.')}</p>`;
+ }
+}
+function drawGraph(){const result=RENDER[current](st(),st()._title||itemField(item(),'name'));svgText=result.svg;exportName='EconGraph_IB_'+current;$('chart').innerHTML=svgText;placeCurveLabels($('chart').querySelector('svg'));svgText=new XMLSerializer().serializeToString($('chart').querySelector('svg'));$('analysis').textContent=language==='en'?(result.analysisEn||englishAnalysis(current,st(),result)):result.analysis;$('formula').textContent=language==='en'?(result.formulaEn||englishFormula(result.formula)):result.formula;$('metrics').innerHTML=result.stats.map(([label,value,details])=>`<div class="metric"><div class="metric-label">${escapeHtml(tr(label))}</div><div class="metric-value" title="${escapeHtml(value)}">${escapeHtml(value)}</div><div class="metric-detail">${escapeHtml(tr(details))}</div></div>`).join('');drawStages(result);let chips=activeChips();$('chips').innerHTML='<strong>'+tr('ACTIVOS:')+'</strong>'+(chips.length?chips.map(([k,v])=>`<button class="chip" data-remove="${escapeHtml(k)}" title="${tr('Quitar elemento')}">${escapeHtml(tr(v))} ×</button>`).join(''):'<span class="muted-chip">'+tr('Solo el gráfico base. Añade elementos desde el panel derecho.')+'</span>')}
+function onControl(event){
+ const b=event.target.closest('button');
+ if(['market','trade','externality'].includes(current)&&b&&event.type==='click'){
+  const s=st();
+  if(b.dataset.addPolicy){const kind=b.dataset.addPolicy,cfg=POLICY_TYPES[kind];if(cfg){s.steps.push({id:s.nextId++,kind,value:cfg.default});drawControls();drawGraph();}return;}
+  if(b.dataset.clearPolicies){s.steps=[];drawControls();drawGraph();return;}
+  if(b.dataset.removePolicy){s.steps=s.steps.filter(x=>String(x.id)!==b.dataset.removePolicy);drawControls();drawGraph();return;}
+  if(b.dataset.movePolicy){const i=s.steps.findIndex(x=>String(x.id)===b.dataset.movePolicy),j=i+Number(b.dataset.direction);if(i>=0&&j>=0&&j<s.steps.length){[s.steps[i],s.steps[j]]=[s.steps[j],s.steps[i]];drawControls();drawGraph();}return;}
+ }
+ if(['market','trade','externality'].includes(current)&&event.type==='input'&&event.target.dataset.policyValue){const id=event.target.dataset.policyValue,step=st().steps.find(x=>String(x.id)===id);if(step){step.value=Number(event.target.value);const read=$('read-policy-'+id);if(read)read.textContent=f(step.value);drawGraph();}return;}
+ if(current==='adas'&&b&&event.type==='click'){
+  const s=st();
+  if(b.dataset.addcurve){const kind=b.dataset.addcurve;s.steps.push({id:s.nextId++,kind,delta:kind==='ad'?14:10});drawControls();drawGraph();return;}
+  if(b.dataset.removeStep){s.steps=s.steps.filter(x=>String(x.id)!==b.dataset.removeStep);drawControls();drawGraph();return;}
+  if(b.dataset.moveStep){const i=s.steps.findIndex(x=>String(x.id)===b.dataset.moveStep),j=i+Number(b.dataset.direction);if(i>=0&&j>=0&&j<s.steps.length){[s.steps[i],s.steps[j]]=[s.steps[j],s.steps[i]];drawControls();drawGraph();}return;}
+ }
+ if(current==='adas'&&event.type==='input'&&event.target.dataset.stepValue){const id=event.target.dataset.stepValue,step=st().steps.find(x=>String(x.id)===id);if(step){step.delta=Number(event.target.value);const read=$('read-step-'+id);if(read)read.textContent=f(step.delta);drawGraph();}return;}
+ if(b&&b.dataset.pick){let k=b.dataset.pick;st()[k]=st()[k]===b.dataset.val?'':b.dataset.val;drawControls();drawGraph();return}if(b&&b.dataset.toggle){let k=b.dataset.toggle;st()[k]=!st()[k];drawControls();drawGraph();return}let target=event.target;if(target.dataset.range&&event.type==='input'){let k=target.dataset.range;st()[k]=Number(target.value);const out=$('read-'+k);if(out)out.textContent=f(st()[k])+(k==='growth'?'%':'');drawGraph()}else if(target.dataset.check&&event.type==='change'){st()[target.dataset.check]=target.checked;drawControls();drawGraph()}else if(target.dataset.choice&&event.type==='change'){st()[target.dataset.choice]=target.value;drawControls();drawGraph()}}
+function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.style.display='none';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1300)}
+function saveSVG(){download(new Blob([svgText],{type:'image/svg+xml;charset=utf-8'}),exportName+'.svg')}
+function savePNG(){const blob=new Blob([svgText],{type:'image/svg+xml;charset=utf-8'}),url=URL.createObjectURL(blob),img=new Image();img.onload=()=>{const canvas=document.createElement('canvas');canvas.width=2700;canvas.height=1575;const ctx=canvas.getContext('2d');ctx.fillStyle='white';ctx.fillRect(0,0,2700,1575);ctx.drawImage(img,0,0,2700,1575);canvas.toBlob(result=>{if(result)download(result,exportName+'.png');else alert(tr('No se pudo exportar el PNG. Prueba SVG.'));URL.revokeObjectURL(url)},'image/png')};img.onerror=()=>{URL.revokeObjectURL(url);alert(tr('No se pudo exportar el PNG. Usa el SVG como alternativa.'))};img.src=url}
+$('nav').addEventListener('click',e=>{let b=e.target.closest('[data-select]');if(b)select(b.dataset.select)});$('search').addEventListener('input',drawNav);$('filters').addEventListener('click',e=>{let b=e.target.closest('[data-filter]');if(!b)return;filter=b.dataset.filter;$('filters').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));drawNav()});$('controls').addEventListener('click',onControl);$('controls').addEventListener('input',onControl);$('controls').addEventListener('change',onControl);$('chips').addEventListener('click',e=>{let b=e.target.closest('[data-remove]');if(!b)return;const k=b.dataset.remove;if(k==='steps'){st().steps=[];st().nextId=1;}else if(k==='steps')st().steps=[];else st()[k]=k==='policy'?'':false;drawControls();drawGraph()});$('chartTitle').addEventListener('input',e=>{st()._title=e.target.value.trim();drawGraph()});for(let id of ['guides','values','grid','mono'])$(id).addEventListener('change',drawGraph);$('reset').addEventListener('click',()=>{state[current]=defState(current);$('chartTitle').value='';drawControls();drawGraph()});$('png').addEventListener('click',savePNG);$('svg').addEventListener('click',saveSVG);$('pdf').addEventListener('click',()=>window.print());rememberStaticTexts();
+try{language=localStorage.getItem('econgraph_ib_language')==='en'?'en':'es'}catch(e){}
+$('language').value=language;
+translateStaticTexts();
+$('language').addEventListener('change',e=>{
+ language=e.target.value==='en'?'en':'es';
+ try{localStorage.setItem('econgraph_ib_language',language)}catch(e){}
+ translateStaticTexts();
+ select(current);
+});
+select('market');
+</script>
+</body>
+</html>
